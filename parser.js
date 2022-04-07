@@ -1,4 +1,4 @@
-const mathString = "1/2.3"
+const mathString = "\\sum\\limits_{n=1}^{\\infty}1/3"
 
 const closeGroup = (str, d=1) => {
   let openCount = 1;
