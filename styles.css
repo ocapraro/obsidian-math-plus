@@ -1,4 +1,8 @@
 /* Sets all the text color to red! */
-body {
-    /* color: red; */
+/* body {
+    color: red;
+} */
+
+.block-language-math mjx-container.MathJax {
+    text-align: left;
 }
