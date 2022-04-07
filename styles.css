@@ -4,5 +4,5 @@
 } */
 
 .block-language-math mjx-container.MathJax {
-    text-align: left;
+    text-align: left !important;
 }
