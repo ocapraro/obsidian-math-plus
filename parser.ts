@@ -50,17 +50,23 @@ const formatOperator = (str: string, op: string, strFormat: Function) => {
 
 const formatGroups = (str: string) => {
   let formattedString = str.replace(/\)/g, ')}').replace(/\(/g, '{(');
-  formattedString = formattedString.replace(/[0-9][0-9]+/ig, "{$&}");
-  formattedString = formattedString.replace(/[0-9]+\.[0-9]+/ig, "{$&}");
+  formattedString = formattedString.replace(/[0-9.][0-9.]+/ig, "{$&}");
+  return formattedString
+}
+
+const addLines = (str: string) => {
+  let formattedString = `\\begin{align*}&${str.replace(/\n/ig, "\\\\&")}\\end{align*}`;
   return formattedString
 }
 
 export const formatEquation = (str: string) => {
   let formattedString = formatGroups(str);
-  // console.log(formattedString);
+  console.log(formattedString);
   formattedString = formatOperator(formattedString, "\\^", (s1: string,s2: string)=>{return `{{${s1}}\^{${s2}}}`});
-  // console.log(formattedString);
+  console.log(formattedString);
   formattedString = formatOperator(formattedString, "/", (s1: string,s2: string)=>{return `\\frac{${s1}}{${s2}}`});
+  formattedString = addLines(formattedString);
+
 
   return formattedString
 }
