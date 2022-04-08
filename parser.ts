@@ -83,7 +83,7 @@ export const formatEquation = (str: string) => {
       _length:3
     }
   ];
-  let formattedString = formatGroups(str);
+  let formattedString = " "+formatGroups(str);
   // console.log(formattedString);
   for (let i = 0; i < operators.length; i++) {
     const op = operators[i];
