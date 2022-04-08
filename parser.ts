@@ -73,6 +73,11 @@ export const formatEquation = (str: string) => {
       _length:1
     },
     {
+      op:"\\\\lim",
+      format:(s1: string,s2: string)=>{return `\\lim_{${s1}\\to${s2}}`},
+      _length:4
+    },
+    {
       op:"\\\\s",
       format:(s1: string,s2: string)=>{return `\\sum\\limits_{${s2}}^{${s1}}`},
       _length:2

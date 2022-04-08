@@ -6,3 +6,29 @@
 .block-language-math mjx-container.MathJax {
     text-align: left !important;
 }
+
+.math-copy-button {
+    margin-right: 35px;
+    /* font-size: 12px; */
+    width: 26px;
+    height: 26px;
+    padding: 5px;
+    position: absolute;
+    top: 6px;
+    right: 5px;
+    display: flex;
+    /* opacity: 0; */
+    /* transition: opacity 500ms; */
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.block-language-math svg{
+    display: block;
+    width: 16px;
+    fill: var(--text-on-accent);
+    background: var(--interactive-accent);
+}
