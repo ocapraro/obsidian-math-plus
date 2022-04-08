@@ -23,6 +23,16 @@ export default class MyPlugin extends Plugin {
 			el.append(renderMath(equ, true));
 			finishRenderMath();
     });
+
+		this.addCommand({
+      id: "insert-math-block",
+      name: "Insert math block",
+			hotkeys: [{ modifiers: ["Mod"], key: "m" }],
+      editorCallback: (editor: Editor) => {
+        editor.replaceRange("```math\n\n```", editor.getCursor());
+				editor.setCursor(editor.getCursor().line+1);
+      },
+    });
 		/*
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
