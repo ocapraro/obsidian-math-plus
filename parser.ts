@@ -14,7 +14,7 @@ const closeGroup = (str: string, d=1) => {
   }
 }
 
-const formatOperator = (str: string, op: string, strFormat: Function) => {
+const formatOperator = (str: string, op: string, strFormat: Function, l: number) => {
   const ops = [...str.matchAll(new RegExp(op, 'gi'))].map(a => a.index);
   let capturedIndexes = [[0,0]];
   let formattedString = "";
@@ -23,13 +23,13 @@ const formatOperator = (str: string, op: string, strFormat: Function) => {
       const i = ops[s];
       if(i>0 && i<str.length) {
         let range1 = [i-1,i];
-        let range2 = [i+1,i+2];
+        let range2 = [i+l,i+1+l];
         if(str.charAt(i-1) === "}") {
           let flipString = [...str].reverse().join('');
           range1 = [(i-1-closeGroup(flipString.slice(flipString.length-i),0)),i];
         }
-        if(str.charAt(i+1) === "{") {
-          range2 = [i+1, i+2+closeGroup(str.slice(i+1))];
+        if(str.charAt(i+l) === "{") {
+          range2 = [i+l, i+1+l+closeGroup(str.slice(i+l))];
         }
         const currIndex = [range1[0],range2[1]];
         if (currIndex[0] != capturedIndexes[capturedIndexes.length-1][1]) {
@@ -51,6 +51,7 @@ const formatOperator = (str: string, op: string, strFormat: Function) => {
 const formatGroups = (str: string) => {
   let formattedString = str.replace(/\)/g, ')}').replace(/\(/g, '{(');
   formattedString = formattedString.replace(/[0-9.][0-9.]+/ig, "{$&}");
+  formattedString = formattedString.replace(/\\infty/ig, "{$&}");
   return formattedString
 }
 
@@ -60,11 +61,35 @@ const addLines = (str: string) => {
 }
 
 export const formatEquation = (str: string) => {
+  const operators = [
+    {
+      op:"\\^",
+      format:(s1: string,s2: string)=>{return `{{${s1}}\^{${s2}}}`},
+      _length:1
+    },
+    {
+      op:"/",
+      format:(s1: string,s2: string)=>{return `\\frac{${s1}}{${s2}}`},
+      _length:1
+    },
+    {
+      op:"\\\\s",
+      format:(s1: string,s2: string)=>{return `\\sum\\limits_{${s2}}^{${s1}}`},
+      _length:2
+    },
+    {
+      op:"\\\\is",
+      format:(s1: string,s2: string)=>{return `${s1}\\sum\\limits_{n=${s2}}^{\\infty}`},
+      _length:3
+    }
+  ];
   let formattedString = formatGroups(str);
-  console.log(formattedString);
-  formattedString = formatOperator(formattedString, "\\^", (s1: string,s2: string)=>{return `{{${s1}}\^{${s2}}}`});
-  console.log(formattedString);
-  formattedString = formatOperator(formattedString, "/", (s1: string,s2: string)=>{return `\\frac{${s1}}{${s2}}`});
+  // console.log(formattedString);
+  for (let i = 0; i < operators.length; i++) {
+    const op = operators[i];
+    formattedString = formatOperator(formattedString,op.op,op.format,op._length);
+    // console.log(formattedString);
+  }
   formattedString = addLines(formattedString);
 
 
