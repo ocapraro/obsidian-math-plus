@@ -1,5 +1,9 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, renderMath, finishRenderMath, loadMathJax } from 'obsidian';
 import { formatEquation } from "./parser";
+import { ExampleView, VIEW_TYPE_EXAMPLE, renderCanvas } from "./view"
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { ExcalidrawCanvas } from "./ExcalidrawCanvas";
 
 // Remember to rename these classes and interfaces!
 
@@ -18,19 +22,31 @@ export default class MyPlugin extends Plugin {
 		await this.loadSettings();
 		await loadMathJax();
 
+		// this.registerView(
+    //   VIEW_TYPE_EXAMPLE,
+    //   (leaf) => new ExampleView(leaf)
+    // );
+
+    // this.addRibbonIcon("dice", "Activate view", () => {
+    //   this.activateView();
+    // });
+
 		this.registerMarkdownCodeBlockProcessor("math", async (source, el, ctx) => {
 			const parser = new DOMParser();
-			const doc = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M384 96L384 0h-112c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48H464c26.51 0 48-21.49 48-48V128h-95.1C398.4 128 384 113.6 384 96zM416 0v96h96L416 0zM192 352V128h-144c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h192c26.51 0 48-21.49 48-48L288 416h-32C220.7 416 192 387.3 192 352z"/></svg>`, 'text/html');
-			
+			const copyIcon = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M384 96L384 0h-112c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48H464c26.51 0 48-21.49 48-48V128h-95.1C398.4 128 384 113.6 384 96zM416 0v96h96L416 0zM192 352V128h-144c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h192c26.51 0 48-21.49 48-48L288 416h-32C220.7 416 192 387.3 192 352z"/></svg>`, 'text/html');
+			// el.append(<ExcalidrawCanvas />);
+			renderCanvas(el);
+
 			let equ = formatEquation(source);
 			const button = el.createEl("div",{ cls: "edit-block-button math-copy-button"});
-			button.append(doc.body);
+			button.append(copyIcon.body);
 			button.setAttr("aria-label","Copy as LaTex");
 			button.onClickEvent(()=>{
 				navigator.clipboard.writeText(equ);
 				new Notice('Block Copied');
 			});
 			el.append(renderMath(equ, true));
+			// el.append(excalidrawFrame.body);
 			finishRenderMath();
     });
 
@@ -110,6 +126,19 @@ export default class MyPlugin extends Plugin {
 	onunload() {
 
 	}
+
+	async activateView() {
+    this.app.workspace.detachLeavesOfType(VIEW_TYPE_EXAMPLE);
+
+    await this.app.workspace.getRightLeaf(false).setViewState({
+      type: VIEW_TYPE_EXAMPLE,
+      active: true,
+    });
+
+    this.app.workspace.revealLeaf(
+      this.app.workspace.getLeavesOfType(VIEW_TYPE_EXAMPLE)[0]
+    );
+  }
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());

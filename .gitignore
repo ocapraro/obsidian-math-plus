@@ -20,3 +20,7 @@ data.json
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
+
+# Exclude Excalidraw Assets
+excalidraw-assets
+excalidraw-assets-dev
