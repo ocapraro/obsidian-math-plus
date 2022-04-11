@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import Excalidraw, {
   exportToCanvas,
   exportToSvg,
+  exportWithDarkMode,
   exportToBlob,
   serializeAsJSON
 } from "@excalidraw/excalidraw";
@@ -41,7 +42,7 @@ const renderFooter = () => {
 
 let saveTimeout;
 
-const saveData = (setInitialData, curData, id) => {
+const saveData = (setInitialData, curData, id, saveToFile) => {
   clearTimeout(saveTimeout)
 
   saveTimeout = setTimeout(async() => {
@@ -50,11 +51,46 @@ const saveData = (setInitialData, curData, id) => {
     setInitialData(formattedData);
     console.log("stored")
     localStorage.setItem(`excalidrawMathData-${id}`, JSON.stringify(formattedData));
-    console.log("Updated");
+    console.log("Updated!");
+    await exportSVG(formattedData, id, saveToFile);
   }, 500)
 }
 
-export function ExcalidrawCanvas({ id }) {
+
+const exportSVG = async (data, id, saveToFile) => {
+  let canvas = document.getElementById(`math-canvas-${id}`);
+  let formattedData = {...data};
+  formattedData.appState.collaborators = [];
+  formattedData.elements.unshift({
+    "id": "8CNL550q56lrGZ4uWepQE",
+    "type": "rectangle",
+    "x": 1,
+    "y": 1,
+    "width": 675.4849853515625,
+    "height": canvas.offsetHeight-30,
+    "angle": 0,
+    "strokeColor": "transparent",
+    "backgroundColor": "transparent",
+    "fillStyle": "hachure",
+    "strokeWidth": 1,
+    "strokeStyle": "solid",
+    "roughness": 1,
+    "opacity": 100,
+    "groupIds": [],
+    "strokeSharpness": "sharp",
+    "seed": 1059728569,
+    "version": 211,
+    "versionNonce": 1597954423,
+    "isDeleted": false,
+    "boundElements": null,
+    "updated": 1649700340427,
+    "link": null
+  });
+  const svg = await exportToSvg(formattedData);
+  saveToFile("data-"+id+".svg",svg.outerHTML);
+}
+
+export function ExcalidrawCanvas({ id, saveToFile }) {
   const excalidrawRef = useRef(null);
   const dimensionRef = useRef();
   const [InitialData, setInitialData] =  useState(localStorage.getItem(`excalidrawMathData-${id}`)?
@@ -122,14 +158,14 @@ export function ExcalidrawCanvas({ id }) {
         // codeBlock.style.cursor = "pointer";
       }
     }}>
-      <button onClick={()=>{
+      <button className="math-save-button" onClick={async ()=>{
         let curData = {
           elements: excalidrawRef.current.getSceneElements(),
           appState: excalidrawRef.current.getAppState(),
           scrollToContent: false,
           libraryItems: []
         };
-        saveData(setInitialData, curData, id);
+        saveData(setInitialData, curData, id, saveToFile);
       }} style={{
         zIndex:5,
         position:"absolute",

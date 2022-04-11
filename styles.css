@@ -7,13 +7,19 @@
     text-align: left !important;
 }
 
+.block-language-math {
+  position: relative;
+}
+
 .math-button-group {
-    margin-right: 26px;
+    margin-right: 21px;
     position: absolute;
     top: 5px;
     right: 5px;
     display: flex;
+    flex-direction: row-reverse;
     padding: 0;
+    margin-top: -20px;
 }
 
 .math-button {
@@ -38,6 +44,19 @@
     fill: var(--text-on-accent);
 }
 
+.math-svg-wrapper > svg {
+  height: unset;
+  width: 695px;
+  filter: invert(1);
+}
+
+.math-svg-wrapper {
+  top: 0;
+  position: absolute;
+  margin-top: -9px;
+  margin-left: -9px;
+}
+
 /* Canvas */
 
 .excalidraw-canvas {
@@ -45,7 +64,13 @@
   text-align: center;
   height: 100%;
   width: 100%;
+  /* position: absolute; */
+}
+.excalidraw-canvas-wrapper {
   position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
 }
 
 .button-wrapper button {
@@ -91,6 +116,7 @@
     display: flex;
   } */
 }
+
 /* Hide UI */
 .App-bottom-bar.App-bottom-bar.App-bottom-bar, .HintViewer.HintViewer.HintViewer {
     display: none;

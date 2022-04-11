@@ -25,3 +25,6 @@ data.json
 excalidraw-assets
 excalidraw-assets-dev
 excalidraw-files
+
+# Exclude drawings
+drawings/*
