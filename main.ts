@@ -34,11 +34,14 @@ export default class MyPlugin extends Plugin {
 		this.registerMarkdownCodeBlockProcessor("math", async (source, el, ctx) => {
 			const parser = new DOMParser();
 			const copyIcon = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="block-button"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M384 96L384 0h-112c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48H464c26.51 0 48-21.49 48-48V128h-95.1C398.4 128 384 113.6 384 96zM416 0v96h96L416 0zM192 352V128h-144c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h192c26.51 0 48-21.49 48-48L288 416h-32C220.7 416 192 387.3 192 352z"/></svg>`, 'text/html');
-			// el.append(<ExcalidrawCanvas />);
-			renderCanvas(el);
+
+			// Render Excalidraw
+			let blockId = JSON.parse(source.match(/\|\|.+\|\|/gm)[0].replace(/\|\|/gm,"")).id;
+			renderCanvas(el, blockId);
 
 			// Parse Equation
-			let equ = formatEquation(source);
+			let rawEqu = source.replace(/\|\|.+\|\|\n+/gm,"");
+			let equ = formatEquation(rawEqu);
 
 			// Add Copy LaTex Button
 			const copyButton = el.createEl("div",{ cls: "edit-block-button math-copy-button"});
@@ -48,27 +51,8 @@ export default class MyPlugin extends Plugin {
 				navigator.clipboard.writeText(equ);
 				new Notice('Block Copied');
 			});
-
-			// Add Excalidraw UI
-			// const exUi = el.createEl("div",{ cls: "math-button-group"});
-			// // Select Button
-			// renderButton(exUi, "selection", `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="" style="padding-left:2px;"><path d="M302.189 329.126H196.105l55.831 135.993c3.889 9.428-.555 19.999-9.444 23.999l-49.165 21.427c-9.165 4-19.443-.571-23.332-9.714l-53.053-129.136-86.664 89.138C18.729 472.71 0 463.554 0 447.977V18.299C0 1.899 19.921-6.096 30.277 5.443l284.412 292.542c11.472 11.179 3.007 31.141-12.5 31.141z"></path></svg>`);
-			// // Rectangle Button
-			// renderButton(exUi, "rectangle", `<svg viewBox="0 0 448 512"><path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48z"></path></svg>`);
-			// // Arrow Button
-			// renderButton(exUi, "arrow", `<svg viewBox="0 0 448 512" class="rtl-mirror"><path d="M313.941 216H12c-6.627 0-12 5.373-12 12v56c0 6.627 5.373 12 12 12h301.941v46.059c0 21.382 25.851 32.09 40.971 16.971l86.059-86.059c9.373-9.373 9.373-24.569 0-33.941l-86.059-86.059c-15.119-15.119-40.971-4.411-40.971 16.971V216z"></path></svg>`);
-			// // Pencil Button
-			// renderButton(exUi, "freedraw", `<svg viewBox="0 0 512 512"><path fill="currentColor" d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"></path></svg>`);
-
-			// el.addEventListener('keydown', (e) => {
-			// 	if(e.code==="Escape") {
-			// 		const selectButton = el.querySelector(`.math-selection-button`) as HTMLElement;
-			// 		selectButton.click();
-			// 	}
-			// });
 			// Render Equation
 			el.append(renderMath(equ, true));
-			// el.append(excalidrawFrame.body);
 			finishRenderMath();
     });
 

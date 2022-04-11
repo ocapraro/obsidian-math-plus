@@ -2,10 +2,12 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import Excalidraw, {
   exportToCanvas,
   exportToSvg,
-  exportToBlob
+  exportToBlob,
+  serializeAsJSON
 } from "@excalidraw/excalidraw";
-import InitialData from "./initialData";
-import initialData from "./initialData";
+import fs from "fs";
+// import InitialData from "./initialData";
+// import initialData from "./initialData";
 
 const resolvablePromise = () => {
   let resolve;
@@ -37,8 +39,31 @@ const renderFooter = () => {
   );
 };
 
-export function ExcalidrawCanvas() {
+let saveTimeout;
+
+const saveData = (setInitialData, curData, id) => {
+  clearTimeout(saveTimeout)
+
+  saveTimeout = setTimeout(async() => {
+    let formattedData = {...curData};
+    formattedData.appState.collaborators = [];
+    setInitialData(formattedData);
+    console.log("stored")
+    localStorage.setItem(`excalidrawMathData-${id}`, JSON.stringify(formattedData));
+    console.log("Updated");
+  }, 500)
+}
+
+export function ExcalidrawCanvas({ id }) {
   const excalidrawRef = useRef(null);
+  const [InitialData, setInitialData] =  useState(localStorage.getItem(`excalidrawMathData-${id}`)?
+  JSON.parse(localStorage.getItem(`excalidrawMathData-${id}`))
+  :{
+    elements: [],
+    appState: { viewBackgroundColor: "#fff0", currentItemFontFamily: 1 },
+    scrollToContent: false,
+    libraryItems: []
+  });
 
   const initialStatePromiseRef = useRef({ promise: null });
   if (!initialStatePromiseRef.current.promise) {
@@ -60,37 +85,6 @@ export function ExcalidrawCanvas() {
     };
   }, []);
 
-  const updateScene = () => {
-    const sceneData = {
-      elements: [
-        {
-          type: "rectangle",
-          version: 141,
-          versionNonce: 361174001,
-          isDeleted: false,
-          id: "oDVXy8D6rom3H1-LLH2-f",
-          fillStyle: "hachure",
-          strokeWidth: 1,
-          strokeStyle: "solid",
-          roughness: 1,
-          opacity: 100,
-          angle: 0,
-          x: 100.50390625,
-          y: 93.67578125,
-          strokeColor: "#c92a2a",
-          backgroundColor: "#fff0",
-          width: 186.47265625,
-          height: 141.9765625,
-          seed: 1968410350,
-          groupIds: []
-        }
-      ],
-      appState: {
-        viewBackgroundColor: "#edf2ff"
-      }
-    };
-    excalidrawRef.current.updateScene(sceneData);
-  };
 
   const onLinkOpen = useCallback((element, event) => {
     const link = element.link;
@@ -107,12 +101,31 @@ export function ExcalidrawCanvas() {
     }
   }, []);
 
+
   return (
     <div className="excalidraw-canvas"style={{
       fontFamily: "sans-serif",
       textAlign: "center",
       height: "100%"
     }}>
+      <button onClick={()=>{
+        let curData = {
+          elements: excalidrawRef.current.getSceneElements(),
+          appState: excalidrawRef.current.getAppState(),
+          scrollToContent: false,
+          libraryItems: []
+        };
+        saveData(setInitialData, curData, id);
+      }} style={{
+        zIndex:5,
+        position:"absolute",
+        opacity: 0,
+        transition: "opacity 300ms",
+        left:"calc(50% + 20px)",
+        transform: "translateX(-50%)"
+        }}>
+        Save Drawing
+      </button>
       <div
         style={{ height: "100%" }}
         onWheelCapture={(e) => {
@@ -125,11 +138,25 @@ export function ExcalidrawCanvas() {
         }}>
           <Excalidraw
             ref={excalidrawRef}
-            initialData={initialStatePromiseRef.current.promise}
-            onChange={(elements, state) =>
-              console.info("Elements :", elements, "State : ", state)
-            }
-            onPointerUpdate={(payload) => console.info(payload)}
+            initialData={InitialData}
+            onChange={(elements, state) => {
+              let curData = {
+                elements: elements,
+                appState: state,
+                scrollToContent: false,
+                libraryItems: []
+              };
+              // console.info("Elements :", elements, "State : ", state);
+              // console.log("State Change");
+              // setInitialData(curData);
+              // setElements(elements);
+              // setAppState(state);
+              // console.log("JSON: "+serializeAsJSON({
+              //   elements: elements,
+              //   appState: state,
+              // }));
+            }}
+            // onPointerUpdate={(payload) => console.info(payload)}
             onCollabButtonClick={() =>
               window.alert("You clicked on collab button")
             }

@@ -87,7 +87,7 @@
   } */
 }
 /* Hide UI */
-.App-bottom-bar.App-bottom-bar.App-bottom-bar {
+.App-bottom-bar.App-bottom-bar.App-bottom-bar, .HintViewer.HintViewer.HintViewer {
     display: none;
 }
 
@@ -105,13 +105,12 @@
     box-shadow: none;
     opacity: 0;
     transition: opacity 300ms;
-    top: 50%;
-    transform: translateY(-50%);
+    top: calc(50% - 20px);
     z-index: 1;
 }
 
-.block-language-math:hover .App-toolbar-container .Island.App-toolbar {
-    opacity: 1;
+.block-language-math:hover .App-toolbar-container .Island.App-toolbar, .block-language-math:hover button {
+    opacity: 1 !important;
 }
 
 .App-toolbar .Stack.Stack_horizontal {
