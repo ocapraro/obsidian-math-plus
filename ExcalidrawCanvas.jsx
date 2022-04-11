@@ -56,6 +56,7 @@ const saveData = (setInitialData, curData, id) => {
 
 export function ExcalidrawCanvas({ id }) {
   const excalidrawRef = useRef(null);
+  const dimensionRef = useRef();
   const [InitialData, setInitialData] =  useState(localStorage.getItem(`excalidrawMathData-${id}`)?
   JSON.parse(localStorage.getItem(`excalidrawMathData-${id}`))
   :{
@@ -107,6 +108,19 @@ export function ExcalidrawCanvas({ id }) {
       fontFamily: "sans-serif",
       textAlign: "center",
       height: "100%"
+    }} onMouseEnter={()=>{
+      let canvas = document.getElementById(`math-canvas-${id}`);
+      if (canvas.offsetHeight<350) {
+        canvas.addClass("small-canvas");
+        let codeBlock = canvas.querySelector("section");
+        let buttonStack = codeBlock.querySelector(".Stack_horizontal .Stack_horizontal");
+        // codeBlock.style.display = "none";
+        buttonStack.style.flexDirection = "row";
+        codeBlock.style.top = "unset";
+        codeBlock.style.bottom = "0";
+        // codeBlock.style.maxWidth = "60px";
+        // codeBlock.style.cursor = "pointer";
+      }
     }}>
       <button onClick={()=>{
         let curData = {
@@ -133,7 +147,7 @@ export function ExcalidrawCanvas({ id }) {
           e.stopPropagation();
         }}
       >
-        <div className="excalidraw-wrapper"style={{
+        <div className="excalidraw-wrapper" id={`math-canvas-${id}`} ref={dimensionRef} style={{
           backgroundColor: "#fff0"
         }}>
           <Excalidraw

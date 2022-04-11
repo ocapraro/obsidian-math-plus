@@ -33,7 +33,6 @@ export default class MyPlugin extends Plugin {
 
 		this.registerMarkdownCodeBlockProcessor("math", async (source, el, ctx) => {
 			const parser = new DOMParser();
-			const copyIcon = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="block-button"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M384 96L384 0h-112c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48H464c26.51 0 48-21.49 48-48V128h-95.1C398.4 128 384 113.6 384 96zM416 0v96h96L416 0zM192 352V128h-144c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h192c26.51 0 48-21.49 48-48L288 416h-32C220.7 416 192 387.3 192 352z"/></svg>`, 'text/html');
 
 			// Render Excalidraw
 			let blockId = JSON.parse(source.match(/\|\|.+\|\|/gm)[0].replace(/\|\|/gm,"")).id;
@@ -43,14 +42,29 @@ export default class MyPlugin extends Plugin {
 			let rawEqu = source.replace(/\|\|.+\|\|\n+/gm,"");
 			let equ = formatEquation(rawEqu);
 
+			// Add button group
+			const editButtonGroup = el.createEl("div",{ cls: "math-button-group"});
+
 			// Add Copy LaTex Button
-			const copyButton = el.createEl("div",{ cls: "edit-block-button math-copy-button"});
-			copyButton.append(copyIcon.body);
+			const copyIcon = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="block-button"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M384 96L384 0h-112c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48H464c26.51 0 48-21.49 48-48V128h-95.1C398.4 128 384 113.6 384 96zM416 0v96h96L416 0zM192 352V128h-144c-26.51 0-48 21.49-48 48v288c0 26.51 21.49 48 48 48h192c26.51 0 48-21.49 48-48L288 416h-32C220.7 416 192 387.3 192 352z"/></svg>`, 'text/html');
+			const copyButton = editButtonGroup.createEl("div",{ cls: "math-button"});
+			copyButton.append(copyIcon.body.querySelector("svg"));
 			copyButton.setAttr("aria-label","Copy as LaTex");
 			copyButton.onClickEvent(()=>{
 				navigator.clipboard.writeText(equ);
 				new Notice('Block Copied');
 			});
+
+			// // Add Draw Button
+			// const drawIcon = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M362.7 19.32C387.7-5.678 428.3-5.678 453.3 19.32L492.7 58.75C517.7 83.74 517.7 124.3 492.7 149.3L444.3 197.7L314.3 67.72L362.7 19.32zM421.7 220.3L188.5 453.4C178.1 463.8 165.2 471.5 151.1 475.6L30.77 511C22.35 513.5 13.24 511.2 7.03 504.1C.8198 498.8-1.502 489.7 .976 481.2L36.37 360.9C40.53 346.8 48.16 333.9 58.57 323.5L291.7 90.34L421.7 220.3z"/></svg>`,"text/html")
+			// const drawButton = editButtonGroup.createEl("div",{ cls: "math-button"});
+			// drawButton.append(drawIcon.body.querySelector("svg"));
+			// drawButton.setAttr("aria-label","Draw on Block");
+			// drawButton.onClickEvent(()=>{
+			// 	navigator.clipboard.writeText(equ);
+			// 	new Notice('Block Copied');
+			// });
+
 			// Render Equation
 			el.append(renderMath(equ, true));
 			finishRenderMath();

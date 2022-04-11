@@ -7,30 +7,35 @@
     text-align: left !important;
 }
 
-.math-copy-button {
-    margin-right: 35px;
-    /* font-size: 12px; */
+.math-button-group {
+    margin-right: 26px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    padding: 0;
+}
+
+.math-button {
     width: 26px;
     height: 26px;
     padding: 5px;
-    position: absolute;
-    top: 6px;
-    right: 5px;
     display: flex;
-    /* opacity: 0; */
-    /* transition: opacity 500ms; */
+    position: relative;
     background-color: var(--interactive-accent);
     color: var(--text-on-accent);
     border-radius: 5px;
     cursor: pointer;
     z-index: 1;
+    margin-right: 10px;
+    opacity: 0;
+    transition: opacity 500ms;
 }
 
-.block-language-math svg.block-button{
+.block-language-math svg{
     display: block;
     width: 16px;
     fill: var(--text-on-accent);
-    background: var(--interactive-accent);
 }
 
 /* Canvas */
@@ -105,11 +110,9 @@
     box-shadow: none;
     opacity: 0;
     transition: opacity 300ms;
-    top: calc(50% - 20px);
-    z-index: 1;
 }
 
-.block-language-math:hover .App-toolbar-container .Island.App-toolbar, .block-language-math:hover button {
+.cm-preview-code-block:hover .App-toolbar-container .Island.App-toolbar, .cm-preview-code-block:hover button, .cm-preview-code-block:hover .math-button {
     opacity: 1 !important;
 }
 
@@ -128,66 +131,33 @@
     /* transform: translateY(-50%); */
 }
 
+.FixedSideContainer.FixedSideContainer_side_top.App-top-bar {
+    height: 100%;
+}
+
+.FixedSideContainer.FixedSideContainer_side_top.App-top-bar section {
+    position: absolute;
+    top: calc(50% - 20px);
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
 .excalidraw section {
     position: absolute;
     right: 0;
 }
 
-/* My UI */
-.math-button-group {
-    /* background-color: #2a2a2a; */
-    border: 2px solid #333;
-    border-right: none;
-    /* width: 100px; */
-    /* height: 200px; */
-    padding: 10px;
-    padding-right: 5px;
-    border-radius: 10px 0 0 10px;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-    padding-bottom: 0;
-    opacity: 0;
-    transition: opacity 300ms;
+/* Small UI */
+.small-canvas section{
+    max-width: 60px;
+    background-color: var(--background-primary);
+    transition: max-width 300ms;
 }
 
-.block-language-math:hover > .math-button-group {
-    opacity: 1;
+.small-canvas section:hover {
+    max-width: 250px;
 }
 
-.math-excalidraw-button {
-    padding: 8px;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #333;
-    margin-bottom: 10px;
-}
-
-.math-excalidraw-button.selected-button {
-    background-color: #2b2b2b;
-}
-
-.math-excalidraw-button.selected-button:hover {
-    background-color: #2f2f2f;
-}
-
-.math-excalidraw-button:hover {
-    background-color: #3c3c3c;
-}
-
-.math-excalidraw-icon {
-    height: 16px;
-    width: 16px;
-    display: flex;
-    justify-content: space-around;
-}
-
-.math-excalidraw-icon svg {
-    height: 16px;
-    fill: #fff;
-}
 
 /* Vars */
 .excalidraw {
