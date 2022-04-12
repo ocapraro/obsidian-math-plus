@@ -49,13 +49,11 @@ const saveData = (setInitialData, curData, id, saveToFile) => {
     let formattedData = {...curData};
     formattedData.appState.collaborators = [];
     setInitialData(formattedData);
-    console.log("stored")
     localStorage.setItem(`excalidrawMathData-${id}`, JSON.stringify(formattedData));
     let lastId = localStorage.getItem("math-max-id");
     if (parseInt(lastId)<id){
       localStorage.setItem("math-max-id", id);
     }
-    console.log("Updated!");
     await exportSVG(formattedData, id, saveToFile);
   }, 500)
 }
@@ -182,18 +180,6 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
           <Excalidraw
             ref={excalidrawRef}
             initialData={InitialData}
-            onChange={(elements, state) => {
-              // console.info("Elements :", elements, "State : ", state);
-              // console.log("State Change");
-              // setInitialData(curData);
-              // setElements(elements);
-              // setAppState(state);
-              // console.log("JSON: "+serializeAsJSON({
-              //   elements: elements,
-              //   appState: state,
-              // }));
-            }}
-            // onPointerUpdate={(payload) => console.info(payload)}
             onCollabButtonClick={() =>
               window.alert("You clicked on collab button")
             }

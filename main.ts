@@ -1,16 +1,8 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, renderMath, finishRenderMath, loadMathJax, FileManager, FileSystemAdapter, Vault } from 'obsidian';
+import { App, Editor, Notice, Plugin, PluginSettingTab, Setting, renderMath, finishRenderMath, loadMathJax } from 'obsidian';
 import { formatEquation } from "./parser";
 import { renderCanvas } from "./view"
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import { ExcalidrawCanvas } from "./ExcalidrawCanvas";
-import { FileSystemHandle } from '@excalidraw/excalidraw/types/data/filesystem';
 
-// const Data = require( "./drawings/data.svg");
-
-// Remember to rename these classes and interfaces!
-
-interface MyPluginSettings {
+interface MathPlusSettings {
 	selectVisable: boolean;
 	rectVisable: boolean;
 	diamondVisable: boolean;
@@ -21,7 +13,7 @@ interface MyPluginSettings {
 	textVisable: boolean;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: MathPlusSettings = {
 	selectVisable: true,
 	rectVisable: false,
 	diamondVisable: false,
@@ -32,24 +24,12 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	textVisable: true
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class MathPlus extends Plugin {
+	settings: MathPlusSettings;
 
 	async onload() {
 		await this.loadSettings();
 		await loadMathJax();
-
-		// let manager = new FileSystemAdapter();
-		// manager.mkdir("./MathDrawings");
-
-		// this.registerView(
-    //   VIEW_TYPE_EXAMPLE,
-    //   (leaf) => new ExampleView(leaf)
-    // );
-
-    // this.addRibbonIcon("dice", "Activate view", () => {
-    //   this.activateView();
-    // });
 
 		this.registerMarkdownCodeBlockProcessor("math", async (source, el, ctx) => {
 			const parser = new DOMParser();
@@ -88,7 +68,6 @@ export default class MyPlugin extends Plugin {
 			if(await this.app.vault.adapter.exists(configPath)){
 				let svgData = await this.app.vault.adapter.read(configPath);
 				el.append(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
-				// renderCanvas(el, blockId, saveToFile);
 			}
 
 			// add id class to block
@@ -138,18 +117,9 @@ export default class MyPlugin extends Plugin {
 				let svgWrapper = el.querySelector(".math-svg-wrapper") as HTMLElement;
 				if(svgWrapper){
 					svgWrapper.remove();
-					// setTimeout(() => {
-					// 	let eWrapper = document.querySelector(".excalidraw-wrapper") as HTMLElement;
-					// 	eWrapper.style.opacity = "1";
-					// }, 1000);
 				}
 				drawButton.hide();
 				doneButton.show();
-				// setTimeout(() => {
-				// 	resizeUi(blockId);
-				// }, 600);
-				// renderMath(equ, true)
-				// finishRenderMath();
 			});
 
 			// Add done Button Onclick
@@ -174,70 +144,12 @@ export default class MyPlugin extends Plugin {
 				let id = parseInt(localStorage.getItem("math-max-id"))+1;
         editor.replaceRange("```math\n||{\"id\":"+id+"}||\n\n\n```", editor.getCursor());
 				editor.setCursor(editor.getCursor().line+3);
+				localStorage.setItem("math-max-id", id.toString());
       },
     });
-		/*
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
-		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
-
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Text');
-
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			}
-		});
-		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'sample-editor-command',
-			name: 'Sample editor command',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				console.log(editor.getSelection());
-				editor.replaceSelection('Sample Editor Command');
-			}
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-sample-modal-complex',
-			name: 'Open sample modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
-
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-			}
-		});
-		*/
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		// // If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// // Using this function will automatically remove the event listener when this plugin is disabled.
-		// this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-		// 	console.log('click', evt);
-		// });
-
-		// // When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		// this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+		this.addSettingTab(new MathPlusSettingTab(this.app, this));
 	}
 
 	onunload() {
@@ -253,41 +165,10 @@ export default class MyPlugin extends Plugin {
 	}
 }
 
-const renderButton = (el: any, id: string, svg: string ) => {
-	const parser = new DOMParser();
-	const icon = parser.parseFromString(svg,'text/html');
-	const button = el.createEl("div",{ cls: `math-excalidraw-button math-${id}-button`});
-	button.addEventListener("click", (event: any)=>{
-		const target = event.target || event.srcElement;
-		document.querySelectorAll(`.math-excalidraw-button`).forEach(e => {e.removeClass("selected-button")});
-		button.addClass("selected-button");
-		const excalidrawButton = document.querySelectorAll(`[data-testid="${id}"]`)[0] as HTMLElement;
-		excalidrawButton.click();
-	}, false);
-	const iconWrapper = button.createEl("div",{ cls: "math-excalidraw-icon"});
-	iconWrapper.append(icon.body.querySelector("svg"));
-}
+class MathPlusSettingTab extends PluginSettingTab {
+	plugin: MathPlus;
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
-}
-
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
-
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: MathPlus) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -301,7 +182,8 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.createEl('h3', {text: 'Excalidraw UI'});
 
 		new Setting(containerEl)
-		.setName('Select Button Visable')
+		.setName('Select Button Visible')
+		.setDesc("Keys: V or 1")
 		.addToggle(toggle => toggle
 		.setValue(this.plugin.settings.selectVisable)
 		.onChange(async (value) => {
@@ -310,7 +192,8 @@ class SampleSettingTab extends PluginSettingTab {
 		}));
 
 		new Setting(containerEl)
-		.setName('Rectangle Button Visable')
+		.setName('Rectangle Button Visible')
+		.setDesc("Keys: R or 2")
 		.addToggle(toggle => toggle
 		.setValue(this.plugin.settings.rectVisable)
 		.onChange(async (value) => {
@@ -319,7 +202,8 @@ class SampleSettingTab extends PluginSettingTab {
 		}));
 
 		new Setting(containerEl)
-		.setName('Diamond Button Visable')
+		.setName('Diamond Button Visible')
+		.setDesc("Keys: D or 3")
 		.addToggle(toggle => toggle
 		.setValue(this.plugin.settings.diamondVisable)
 		.onChange(async (value) => {
@@ -328,7 +212,8 @@ class SampleSettingTab extends PluginSettingTab {
 		}));
 
 		new Setting(containerEl)
-		.setName('Ellipse Button Visable')
+		.setName('Ellipse Button Visible')
+		.setDesc("Keys: E or 4")
 		.addToggle(toggle => toggle
 		.setValue(this.plugin.settings.ellipseVisable)
 		.onChange(async (value) => {
@@ -337,16 +222,8 @@ class SampleSettingTab extends PluginSettingTab {
 		}));
 
 		new Setting(containerEl)
-		.setName('Line Button Visable')
-		.addToggle(toggle => toggle
-		.setValue(this.plugin.settings.lineVisable)
-		.onChange(async (value) => {
-			this.plugin.settings.lineVisable = value;
-			await this.plugin.saveSettings();
-		}));
-
-		new Setting(containerEl)
-		.setName('Arrow Button Visable')
+		.setName('Arrow Button Visible')
+		.setDesc("Keys: A or 5")
 		.addToggle(toggle => toggle
 		.setValue(this.plugin.settings.arrowVisable)
 		.onChange(async (value) => {
@@ -355,7 +232,18 @@ class SampleSettingTab extends PluginSettingTab {
 		}));
 
 		new Setting(containerEl)
-		.setName('Draw Button Visable')
+		.setName('Line Button Visible')
+		.setDesc("Keys: P or 6")
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.lineVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.lineVisable = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Draw Button Visible')
+		.setDesc("Keys: X or 7")
 		.addToggle(toggle => toggle
 		.setValue(this.plugin.settings.penVisable)
 		.onChange(async (value) => {
@@ -364,7 +252,8 @@ class SampleSettingTab extends PluginSettingTab {
 		}));
 
 		new Setting(containerEl)
-		.setName('Text Button Visable')
+		.setName('Text Button Visible')
+		.setDesc("Keys: T or 8")
 		.addToggle(toggle => toggle
 		.setValue(this.plugin.settings.textVisable)
 		.onChange(async (value) => {
