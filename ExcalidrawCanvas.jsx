@@ -51,6 +51,10 @@ const saveData = (setInitialData, curData, id, saveToFile) => {
     setInitialData(formattedData);
     console.log("stored")
     localStorage.setItem(`excalidrawMathData-${id}`, JSON.stringify(formattedData));
+    let lastId = localStorage.getItem("math-max-id");
+    if (parseInt(lastId)<id){
+      localStorage.setItem("math-max-id", id);
+    }
     console.log("Updated!");
     await exportSVG(formattedData, id, saveToFile);
   }, 500)
@@ -144,19 +148,6 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
       fontFamily: "sans-serif",
       textAlign: "center",
       height: "100%"
-    }} onMouseEnter={()=>{
-      let canvas = document.getElementById(`math-canvas-${id}`);
-      if (canvas.offsetHeight<350) {
-        canvas.addClass("small-canvas");
-        let codeBlock = canvas.querySelector("section");
-        let buttonStack = codeBlock.querySelector(".Stack_horizontal .Stack_horizontal");
-        // codeBlock.style.display = "none";
-        buttonStack.style.flexDirection = "row";
-        codeBlock.style.top = "unset";
-        codeBlock.style.bottom = "0";
-        // codeBlock.style.maxWidth = "60px";
-        // codeBlock.style.cursor = "pointer";
-      }
     }}>
       <button className="math-save-button" onClick={async ()=>{
         let curData = {
@@ -172,7 +163,8 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
         opacity: 0,
         transition: "opacity 300ms",
         left:"calc(50% + 20px)",
-        transform: "translateX(-50%)"
+        transform: "translateX(-50%)",
+        display:"none"
         }}>
         Save Drawing
       </button>
@@ -183,19 +175,14 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
           e.stopPropagation();
         }}
       >
-        <div className="excalidraw-wrapper" id={`math-canvas-${id}`} ref={dimensionRef} style={{
+        <div className={"excalidraw-wrapper"+(document.querySelector(`.math-block-${id}`).offsetHeight<350?" small-canvas":"")} id={`math-canvas-${id}`} ref={dimensionRef} style={{
           backgroundColor: "#fff0"
         }}>
           <Excalidraw
+            
             ref={excalidrawRef}
             initialData={InitialData}
             onChange={(elements, state) => {
-              let curData = {
-                elements: elements,
-                appState: state,
-                scrollToContent: false,
-                libraryItems: []
-              };
               // console.info("Elements :", elements, "State : ", state);
               // console.log("State Change");
               // setInitialData(curData);

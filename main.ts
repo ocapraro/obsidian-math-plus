@@ -50,19 +50,35 @@ export default class MyPlugin extends Plugin {
 				if(await this.app.vault.adapter.exists(configPath)){
 					let svgData = await this.app.vault.adapter.read(configPath);
 					el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
-					// el.append(renderMath(equ, true));
-					// finishRenderMath();
+					drawButton.show();
+					doneButton.hide();
+					new Notice("Saved")
+				}
+			}
+
+			const resizeUi = (id: number) => {
+				let canvas = document.getElementById(`math-canvas-${id}`);
+				if (canvas.offsetHeight<350) {
+					canvas.addClass("small-canvas");
 				}
 			}
 
 			// Render Excalidraw
-			let blockId = JSON.parse(source.match(/\|\|.+\|\|/gm)[0].replace(/\|\|/gm,"")).id;
+
+			let blockOptions = source.match(/\|\|.+\|\|/gm)?JSON.parse(source.match(/\|\|.+\|\|/gm)[0].replace(/\|\|/gm,"")):null;
+			let blockId: number;
+			if(blockOptions) {
+				blockId = blockOptions.id;
+			}
 			const configPath = this.app.vault.configDir + `/plugins/latex-alternative/drawings/data-${blockId}.svg`;
 			if(await this.app.vault.adapter.exists(configPath)){
 				let svgData = await this.app.vault.adapter.read(configPath);
 				el.append(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
 				// renderCanvas(el, blockId, saveToFile);
 			}
+
+			// add id class to block
+			el.addClass("math-block-"+blockId)
 
 			// Parse Equation
 			let rawEqu = source.replace(/\|\|.+\|\|\n+/gm,"");
@@ -84,6 +100,12 @@ export default class MyPlugin extends Plugin {
 			// Add Draw Button
 			const drawIcon = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M362.7 19.32C387.7-5.678 428.3-5.678 453.3 19.32L492.7 58.75C517.7 83.74 517.7 124.3 492.7 149.3L444.3 197.7L314.3 67.72L362.7 19.32zM421.7 220.3L188.5 453.4C178.1 463.8 165.2 471.5 151.1 475.6L30.77 511C22.35 513.5 13.24 511.2 7.03 504.1C.8198 498.8-1.502 489.7 .976 481.2L36.37 360.9C40.53 346.8 48.16 333.9 58.57 323.5L291.7 90.34L421.7 220.3z"/></svg>`,"text/html")
 			const drawButton = editButtonGroup.createEl("div",{ cls: "math-button"});
+
+			// Add Done Button
+			const doneIcon = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M438.6 105.4C451.1 117.9 451.1 138.1 438.6 150.6L182.6 406.6C170.1 419.1 149.9 419.1 137.4 406.6L9.372 278.6C-3.124 266.1-3.124 245.9 9.372 233.4C21.87 220.9 42.13 220.9 54.63 233.4L159.1 338.7L393.4 105.4C405.9 92.88 426.1 92.88 438.6 105.4H438.6z"/></svg>`,"text/html")
+			const doneButton = editButtonGroup.createEl("div",{ cls: "math-button"});
+
+			// Add Draw Button Onclick
 			drawButton.append(drawIcon.body.querySelector("svg"));
 			drawButton.setAttr("aria-label","Draw on Block");
 			drawButton.onClickEvent(async ()=>{
@@ -93,9 +115,23 @@ export default class MyPlugin extends Plugin {
 				if(svgWrapper){
 					svgWrapper.remove();
 				}
+				drawButton.hide();
+				doneButton.show();
+				// setTimeout(() => {
+				// 	resizeUi(blockId);
+				// }, 600);
 				// renderMath(equ, true)
 				// finishRenderMath();
 			});
+
+			// Add done Button Onclick
+			doneButton.append(doneIcon.body.querySelector("svg"));
+			doneButton.setAttr("aria-label","Save Drawing");
+			doneButton.onClickEvent(async ()=>{
+				let saveButton = el.querySelector(".math-save-button") as HTMLElement;
+				saveButton.click();
+			});
+			doneButton.hide();
 
 			// Render Equation
 			el.append(renderMath(equ, true));
@@ -107,8 +143,9 @@ export default class MyPlugin extends Plugin {
       name: "Insert math block",
 			hotkeys: [{ modifiers: ["Mod"], key: "m" }],
       editorCallback: (editor: Editor) => {
-        editor.replaceRange("```math\n\n```", editor.getCursor());
-				editor.setCursor(editor.getCursor().line+1);
+				let id = parseInt(localStorage.getItem("math-max-id"))+1;
+        editor.replaceRange("```math\n||{\"id\":"+id+"}||\n\n```", editor.getCursor());
+				editor.setCursor(editor.getCursor().line+3);
       },
     });
 		/*

@@ -9,6 +9,7 @@
 
 .block-language-math {
   position: relative;
+  min-height: 100px;
 }
 
 .math-button-group {
@@ -178,10 +179,17 @@
     max-width: 60px;
     background-color: var(--background-primary);
     transition: max-width 300ms;
+    top: unset !important;
+    bottom: 0;
+    margin-bottom: -25px;
 }
 
 .small-canvas section:hover {
     max-width: 250px;
+}
+
+.small-canvas section .Stack_horizontal .Stack_horizontal {
+  flex-direction: row;
 }
 
 
