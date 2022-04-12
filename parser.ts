@@ -78,28 +78,27 @@ export const formatEquation = (str: string) => {
   const operators = [
     {
       op:"^",
-      format:(s1: string,s2: string)=>{return `{{${s1}}\^{${s2}}}`},
-      _length:1
+      format:(s1: string,s2: string)=>{return `{{${s1}}\^{${s2}}}`}
+    },
+    {
+      op:"_",
+      format:(s1: string,s2: string)=>{return `{{${s1}}_{${s2}}}`}
     },
     {
       op:"/",
-      format:(s1: string,s2: string)=>{return `\\frac{${s1}}{${s2}}`},
-      _length:1
+      format:(s1: string,s2: string)=>{return `\\frac{${s1}}{${s2}}`}
     },
     {
       op:"\\lim",
-      format:(s1: string,s2: string)=>{return `\\lim_{${s1}\\to${s2}}`},
-      _length:4
+      format:(s1: string,s2: string)=>{return `\\lim_{${s1}\\to${s2}}`}
     },
     {
       op:"\\s",
-      format:(s1: string,s2: string)=>{return `\\sum\\limits_{${s2}}^{${s1}}`},
-      _length:2
+      format:(s1: string,s2: string)=>{return `\\sum\\limits_{${s2}}^{${s1}}`}
     },
     {
       op:"\\is",
-      format:(s1: string,s2: string)=>{return `${s1}\\sum\\limits_{n=${s2}}^{\\infty}`},
-      _length:3
+      format:(s1: string,s2: string)=>{return `${s1}\\sum\\limits_{n=${s2}}^{\\infty}`}
     }
   ];
   let formattedString = " "+formatGroups(str);
