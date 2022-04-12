@@ -3,6 +3,8 @@
     color: red;
 } */
 
+
+
 .block-language-math mjx-container.MathJax {
     text-align: left !important;
 }
@@ -91,9 +93,10 @@
   /* // margin: 50px; */
   padding: 0;
   margin: 0;
+  opacity: 1 !important;
 }
 
-.excalidraw.excalidraw-container.excalidraw--mobile.theme--dark {
+.excalidraw {
   background: #fff0 !important;
 }
 
@@ -119,8 +122,8 @@
 }
 
 /* Hide UI */
-.App-bottom-bar.App-bottom-bar.App-bottom-bar, .HintViewer.HintViewer.HintViewer {
-    display: none;
+.App-bottom-bar.App-bottom-bar.App-bottom-bar, .HintViewer.HintViewer.HintViewer, .App-menu_bottom.App-menu_bottom.App-menu_bottom, .App-menu_top.App-menu_top.App-menu_top {
+    display: none ;
 }
 
 /* Style UI */

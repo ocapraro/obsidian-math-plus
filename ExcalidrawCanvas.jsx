@@ -176,10 +176,10 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
         }}
       >
         <div className={"excalidraw-wrapper"+(document.querySelector(`.math-block-${id}`).offsetHeight<350?" small-canvas":"")} id={`math-canvas-${id}`} ref={dimensionRef} style={{
-          backgroundColor: "#fff0"
+          backgroundColor: "#fff0",
+          opacity:0
         }}>
           <Excalidraw
-            
             ref={excalidrawRef}
             initialData={InitialData}
             onChange={(elements, state) => {

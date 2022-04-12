@@ -111,9 +111,13 @@ export default class MyPlugin extends Plugin {
 			drawButton.onClickEvent(async ()=>{
 				const wrapper = el.createEl("div",{cls:"excalidraw-canvas-wrapper"})
 				renderCanvas(wrapper, blockId, saveToFile);
-				let svgWrapper = el.querySelector(".math-svg-wrapper");
+				let svgWrapper = el.querySelector(".math-svg-wrapper") as HTMLElement;
 				if(svgWrapper){
 					svgWrapper.remove();
+					// setTimeout(() => {
+					// 	let eWrapper = document.querySelector(".excalidraw-wrapper") as HTMLElement;
+					// 	eWrapper.style.opacity = "1";
+					// }, 1000);
 				}
 				drawButton.hide();
 				doneButton.show();
@@ -144,7 +148,7 @@ export default class MyPlugin extends Plugin {
 			hotkeys: [{ modifiers: ["Mod"], key: "m" }],
       editorCallback: (editor: Editor) => {
 				let id = parseInt(localStorage.getItem("math-max-id"))+1;
-        editor.replaceRange("```math\n||{\"id\":"+id+"}||\n\n```", editor.getCursor());
+        editor.replaceRange("```math\n||{\"id\":"+id+"}||\n\n\n```", editor.getCursor());
 				editor.setCursor(editor.getCursor().line+3);
       },
     });
