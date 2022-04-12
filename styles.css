@@ -122,7 +122,15 @@
 }
 
 /* Hide UI */
-.App-bottom-bar.App-bottom-bar.App-bottom-bar, .HintViewer.HintViewer.HintViewer, .App-menu_bottom.App-menu_bottom.App-menu_bottom, .App-menu_top.App-menu_top.App-menu_top {
+.App-menu_top.App-menu_top.App-menu_top > * {
+  display: none;
+}
+
+.App-menu_top.App-menu_top.App-menu_top > section {
+  display: block;
+}
+
+.App-bottom-bar.App-bottom-bar.App-bottom-bar, .HintViewer.HintViewer.HintViewer, .App-menu_bottom.App-menu_bottom.App-menu_bottom {
     display: none ;
 }
 
@@ -192,11 +200,11 @@
     /* transform: translateY(-50%); */
 }
 
-.FixedSideContainer.FixedSideContainer_side_top.App-top-bar {
+.FixedSideContainer.FixedSideContainer_side_top {
     height: 100%;
 }
 
-.FixedSideContainer.FixedSideContainer_side_top.App-top-bar section {
+.FixedSideContainer.FixedSideContainer_side_top.App-top-bar section, .App-menu_top.App-menu_top.App-menu_top > section {
     position: absolute;
     top: calc(50% - 20px);
     transform: translateY(-50%);
