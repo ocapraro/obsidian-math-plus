@@ -11,11 +11,25 @@ import { FileSystemHandle } from '@excalidraw/excalidraw/types/data/filesystem';
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
-	mySetting: string;
+	selectVisable: boolean;
+	rectVisable: boolean;
+	diamondVisable: boolean;
+	ellipseVisable: boolean;
+	arrowVisable: boolean;
+	lineVisable: boolean;
+	penVisable: boolean;
+	textVisable: boolean;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	selectVisable: true,
+	rectVisable: false,
+	diamondVisable: false,
+	ellipseVisable: false,
+	arrowVisable: true,
+	lineVisable: true,
+	penVisable: true,
+	textVisable: true
 }
 
 export default class MyPlugin extends Plugin {
@@ -41,7 +55,7 @@ export default class MyPlugin extends Plugin {
 			const parser = new DOMParser();
 
 			const saveToFile = async (fileName:string,data:string) => {
-				const configPath = this.app.vault.configDir + "/plugins/latex-alternative/drawings/"+fileName;
+				const configPath = this.app.vault.configDir + "/plugins/obsidian-math-plus/drawings/"+fileName;
 				if(await this.app.vault.adapter.exists(configPath)){
 					await this.app.vault.adapter.write(configPath,data);
 				}else{
@@ -70,7 +84,7 @@ export default class MyPlugin extends Plugin {
 			if(blockOptions) {
 				blockId = blockOptions.id;
 			}
-			const configPath = this.app.vault.configDir + `/plugins/latex-alternative/drawings/data-${blockId}.svg`;
+			const configPath = this.app.vault.configDir + `/plugins/obsidian-math-plus/drawings/data-${blockId}.svg`;
 			if(await this.app.vault.adapter.exists(configPath)){
 				let svgData = await this.app.vault.adapter.read(configPath);
 				el.append(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
@@ -78,7 +92,17 @@ export default class MyPlugin extends Plugin {
 			}
 
 			// add id class to block
-			el.addClass("math-block-"+blockId)
+			el.addClass("math-block-"+blockId);
+
+			// Hide Buttons
+			this.settings.selectVisable?null:el.addClass("no-select");
+			this.settings.rectVisable?null:el.addClass("no-rect");
+			this.settings.diamondVisable?null:el.addClass("no-diamond");
+			this.settings.ellipseVisable?null:el.addClass("no-ellipse");
+			this.settings.arrowVisable?null:el.addClass("no-arrow");
+			this.settings.lineVisable?null:el.addClass("no-line");
+			this.settings.penVisable?null:el.addClass("no-pen");
+			this.settings.textVisable?null:el.addClass("no-text");
 
 			// Parse Equation
 			let rawEqu = source.replace(/\|\|.+\|\|\n+/gm,"");
@@ -273,18 +297,79 @@ class SampleSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', {text: 'Latex Alternative Settings'});
+		containerEl.createEl('h2', {text: 'Obsidian Math + Settings'});
+		containerEl.createEl('h3', {text: 'Excalidraw UI'});
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
+		.setName('Select Button Visable')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.selectVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.selectVisable = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Rectangle Button Visable')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.rectVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.rectVisable = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Diamond Button Visable')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.diamondVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.diamondVisable = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Ellipse Button Visable')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.ellipseVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.ellipseVisable = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Line Button Visable')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.lineVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.lineVisable = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Arrow Button Visable')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.arrowVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.arrowVisable = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Draw Button Visable')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.penVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.penVisable = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Text Button Visable')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.textVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.textVisable = value;
+			await this.plugin.saveSettings();
+		}));
 	}
 }

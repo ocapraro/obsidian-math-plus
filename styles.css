@@ -126,11 +126,42 @@
     display: none ;
 }
 
-/* Style UI */
-.App-toolbar-container.App-toolbar-container.App-toolbar-container > * {
+/* Hide Buttons */
+.App-toolbar label[title="Insert image — 9"] {
+  display: none;
+}
+.no-diamond .App-toolbar label[title="Diamond — D or 3"] {
     display: none;
 }
-.App-toolbar label[title="Diamond — D or 3"], .App-toolbar label[title="Ellipse — E or 4"], .App-toolbar label[title="Line — P or 6"], .App-toolbar label[title="Insert image — 9"] {
+.no-ellipse .App-toolbar label[title="Ellipse — E or 4"] {
+    display: none;
+}
+.no-line .App-toolbar label[title="Line — P or 6"] {
+    display: none;
+}
+
+.no-select .App-toolbar label[title="Selection — V or 1"] {
+  display: none;
+}
+
+.no-rect .App-toolbar label[title="Rectangle — R or 2"] {
+  display: none;
+}
+
+.no-arrow .App-toolbar label[title="Arrow — A or 5"] {
+  display: none;
+}
+
+.no-pen .App-toolbar label[title="Draw — X or 7"] {
+  display: none;
+}
+
+.no-text .App-toolbar label[title="Text — T or 8"] {
+  display: none;
+}
+
+/* Style UI */
+.App-toolbar-container.App-toolbar-container.App-toolbar-container > * {
     display: none;
 }
 .App-toolbar-container .Island.App-toolbar {

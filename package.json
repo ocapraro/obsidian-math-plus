@@ -1,7 +1,7 @@
 {
-	"name": "latex-alternative",
+	"name": "obsidian-math-plus",
 	"version": "1.0.1",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "This is a math plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
