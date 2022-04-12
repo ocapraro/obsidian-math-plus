@@ -14,38 +14,52 @@ const closeGroup = (str: string, d=1) => {
   }
 }
 
-const formatOperator = (str: string, op: string, strFormat: Function, l: number) => {
-  const ops = [...str.matchAll(new RegExp(op, 'gi'))].map(a => a.index);
-  let capturedIndexes = [[0,0]];
-  let formattedString = "";
-  if (ops.length) {
-    for (let s = 0; s < ops.length; s++) {
-      const i = ops[s];
-      if(i>0 && i<str.length) {
+const formatOperator = (str: string, op: string, strFormat: Function) => {
+  let substituteString = str;
+  let substitutes = [];
+  let id = 0;
+  if ((substituteString.split(op).length-1)>0){
+    while (true) {
+      id += 1;
+      const i = substituteString.indexOf(op);
+      if(i>0 && i<substituteString.length && ((substituteString.split(op).length-1)>0)) {
         let range1 = [i-1,i];
-        let range2 = [i+l,i+1+l];
-        if(str.charAt(i-1) === "}") {
-          let flipString = [...str].reverse().join('');
+        let range2 = [i+op.length,i+1+op.length];
+        if(substituteString.charAt(i-1) === "}") {
+          let flipString = [...substituteString].reverse().join('');
           range1 = [(i-1-closeGroup(flipString.slice(flipString.length-i),0)),i];
         }
-        if(str.charAt(i+l) === "{") {
-          range2 = [i+l, i+1+l+closeGroup(str.slice(i+l))];
+        if(substituteString.charAt(i+op.length) === "{") {
+          range2 = [i+op.length, i+1+op.length+closeGroup(substituteString.slice(i+op.length))];
         }
-        const currIndex = [range1[0],range2[1]];
-        if (currIndex[0] != capturedIndexes[capturedIndexes.length-1][1]) {
-          let missing = str.slice(capturedIndexes[capturedIndexes.length-1][1],currIndex[0]);
-          missing = missing;
-          formattedString+=missing;
-        }
-        capturedIndexes.push(currIndex);
-        // Array.prototype.push.apply(capturedIndexes, currIndex);
-        formattedString += strFormat(str.slice(range1[0],range1[1]),str.slice(range2[0],range2[1]))
+        let substitute = {
+          id: `{%33o${id}%33c}`,
+          formattedStr: strFormat(formatOperator(substituteString.slice(range1[0],range1[1]),op,strFormat),formatOperator(substituteString.slice(range2[0],range2[1]),op,strFormat))
+        };
+        substitutes.push(substitute);
+        substituteString = substituteString.replace(substituteString.slice(range1[0],range2[1]),substitute.id);
+
+      }else{
+        break
       }
     }
-    formattedString += str.slice(capturedIndexes[capturedIndexes.length-1][1]);
-    return formattedString
+    while (true) {
+      if((substituteString.split("%33o").length-1)>0){
+        for (let i = 0; i < substitutes.length; i++) {
+          const substitute = substitutes[i];
+          // console.log(substitutes);
+          // console.log(substitute.id);
+          // console.log(substituteString);
+          substituteString = substituteString.replace(substitute.id,substitute.formattedStr);
+        }
+      }else{
+        break
+      }
+    }
+    return substituteString
+  }else{
+    return str
   }
-  return str
 }
 
 const formatGroups = (str: string) => {
@@ -63,7 +77,7 @@ const addLines = (str: string) => {
 export const formatEquation = (str: string) => {
   const operators = [
     {
-      op:"\\^",
+      op:"^",
       format:(s1: string,s2: string)=>{return `{{${s1}}\^{${s2}}}`},
       _length:1
     },
@@ -73,17 +87,17 @@ export const formatEquation = (str: string) => {
       _length:1
     },
     {
-      op:"\\\\lim",
+      op:"\\lim",
       format:(s1: string,s2: string)=>{return `\\lim_{${s1}\\to${s2}}`},
       _length:4
     },
     {
-      op:"\\\\s",
+      op:"\\s",
       format:(s1: string,s2: string)=>{return `\\sum\\limits_{${s2}}^{${s1}}`},
       _length:2
     },
     {
-      op:"\\\\is",
+      op:"\\is",
       format:(s1: string,s2: string)=>{return `${s1}\\sum\\limits_{n=${s2}}^{\\infty}`},
       _length:3
     }
@@ -92,7 +106,7 @@ export const formatEquation = (str: string) => {
   // console.log(formattedString);
   for (let i = 0; i < operators.length; i++) {
     const op = operators[i];
-    formattedString = formatOperator(formattedString,op.op,op.format,op._length);
+    formattedString = formatOperator(formattedString,op.op,op.format);
     // console.log(formattedString);
   }
   formattedString = addLines(formattedString);
@@ -100,3 +114,5 @@ export const formatEquation = (str: string) => {
 
   return formattedString
 }
+
+formatEquation("a^a^2")
