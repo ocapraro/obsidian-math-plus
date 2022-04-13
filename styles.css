@@ -50,7 +50,7 @@
 .math-svg-wrapper > svg {
   height: unset;
   width: 695px;
-  filter: invert(1);
+  filter: var(--theme-filter);
 }
 
 .math-svg-wrapper {
@@ -188,7 +188,7 @@
 .App-toolbar .Stack.Stack_horizontal {
     display: flex;
     flex-direction: column;
-    border: 2px solid #333;
+    border: 2px solid var(--background-modifier-border);
     border-right: none;
     background-color: none;
     padding: 10px;
@@ -216,6 +216,10 @@
     right: 0;
 }
 
+.excalidraw * {
+  caret-color: #000;
+}
+
 /* Small UI */
 .small-canvas section{
     max-width: 60px;
@@ -237,9 +241,25 @@
 
 /* Vars */
 .excalidraw {
-  --color-primary: #faa2c1;
+  --color-primary: var(--interactive-accent) !important;
   --color-primary-darker: #f783ac;
   --color-primary-darkest: #e64980;
   --color-primary-light: #fcc2d7;
   --color-primary-chubb: #faa2c1;
+  --theme-filter: none;
+}
+
+.excalidraw.theme--dark{
+  --theme-filter:unset;
+  --icon-fill-color: unset;
+}
+
+.theme-dark {
+  --theme-filter: invert(93%) hue-rotate(180deg);
+  --icon-fill-color: #ced4da;
+}
+
+.theme-light {
+  --theme-filter: none;
+  --icon-fill-color: #414244;
 }
