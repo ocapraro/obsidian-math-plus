@@ -34,7 +34,7 @@ export default class MathPlus extends Plugin {
 		this.registerMarkdownCodeBlockProcessor("math", async (source, el, ctx) => {
 			const parser = new DOMParser();
 
-			const saveToFile = async (fileName:string,data:string) => {
+			const saveToFile = async (fileName:string,data:string,closeDrawing=true) => {
 				let drawingPath = this.app.vault.configDir + "/plugins/obsidian-math-plus/drawings";
 				if(!await this.app.vault.adapter.exists(drawingPath)){
 					await this.app.vault.adapter.mkdir(drawingPath);
@@ -46,12 +46,13 @@ export default class MathPlus extends Plugin {
 					await this.app.vault.create(configPath,data);
 				}
 				if(await this.app.vault.adapter.exists(configPath)){
-					let svgData = await this.app.vault.adapter.read(configPath);
-					let latexEquation = el.querySelector("mjx-container") as HTMLElement;
-					el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
-					drawButton.show();
-					doneButton.hide();
-					new Notice("Saved")
+					if(closeDrawing){
+						let svgData = await this.app.vault.adapter.read(configPath);
+						el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
+						drawButton.show();
+						doneButton.hide();
+						new Notice("Saved");
+					}
 				}
 			}
 

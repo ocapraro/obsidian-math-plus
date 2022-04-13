@@ -42,7 +42,7 @@ const renderFooter = () => {
 
 let saveTimeout;
 
-const saveData = (setInitialData, curData, id, saveToFile) => {
+const saveData = (setInitialData, curData, id, saveToFile,closeDrawing=true) => {
   clearTimeout(saveTimeout)
 
   saveTimeout = setTimeout(async() => {
@@ -54,12 +54,12 @@ const saveData = (setInitialData, curData, id, saveToFile) => {
     if (parseInt(lastId)<id){
       localStorage.setItem("math-max-id", id);
     }
-    await exportSVG(formattedData, id, saveToFile);
+    await exportSVG(formattedData, id, saveToFile,closeDrawing);
   }, 500)
 }
 
 
-const exportSVG = async (data, id, saveToFile) => {
+const exportSVG = async (data, id, saveToFile, closeDrawing=true) => {
   let canvas = document.getElementById(`math-canvas-${id}`);
   let formattedData = {...data};
   formattedData.appState.collaborators = [];
@@ -89,12 +89,13 @@ const exportSVG = async (data, id, saveToFile) => {
     "link": null
   });
   const svg = await exportToSvg(formattedData);
-  saveToFile("data-"+id+".svg",svg.outerHTML);
+  saveToFile("data-"+id+".svg",svg.outerHTML, closeDrawing);
 }
 
 export function ExcalidrawCanvas({ id, saveToFile }) {
   const excalidrawRef = useRef(null);
   const dimensionRef = useRef();
+  const saveIntervalRef = useRef(null);
   const [InitialData, setInitialData] =  useState(localStorage.getItem(`excalidrawMathData-${id}`)?
   JSON.parse(localStorage.getItem(`excalidrawMathData-${id}`))
   :{
@@ -122,6 +123,19 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
     return () => {
       window.removeEventListener("hashchange", onHashChange);
     };
+  }, []);
+
+  useEffect(() => {
+    saveIntervalRef.current = setInterval(() => {
+      let curData = {
+        elements: excalidrawRef.current.getSceneElements(),
+        appState: excalidrawRef.current.getAppState(),
+        scrollToContent: false,
+        libraryItems: []
+      };
+      saveData(setInitialData, curData, id, saveToFile, false);
+    }, 1000);
+    return () => clearInterval(saveIntervalRef.current);
   }, []);
 
 
@@ -155,6 +169,7 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
           libraryItems: []
         };
         saveData(setInitialData, curData, id, saveToFile);
+        clearInterval(saveIntervalRef.current);
       }} style={{
         zIndex:5,
         position:"absolute",
