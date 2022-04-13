@@ -42,7 +42,7 @@ const renderFooter = () => {
 
 let saveTimeout;
 
-const saveData = (setInitialData, curData, id, saveToFile,closeDrawing=true) => {
+const saveData = (setInitialData, curData, id, saveToFile,closeDrawing=true,exportAsSvg=true) => {
   clearTimeout(saveTimeout)
 
   saveTimeout = setTimeout(async() => {
@@ -54,7 +54,9 @@ const saveData = (setInitialData, curData, id, saveToFile,closeDrawing=true) => 
     if (parseInt(lastId)<id){
       localStorage.setItem("math-max-id", id);
     }
-    await exportSVG(formattedData, id, saveToFile,closeDrawing);
+    if(exportAsSvg){
+      await exportSVG({...formattedData}, id, saveToFile,closeDrawing);
+    }
   }, 500)
 }
 
@@ -89,6 +91,7 @@ const exportSVG = async (data, id, saveToFile, closeDrawing=true) => {
     "link": null
   });
   const svg = await exportToSvg(formattedData);
+  formattedData.elements.unshift();
   saveToFile("data-"+id+".svg",svg.outerHTML, closeDrawing);
 }
 
@@ -133,7 +136,7 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
         scrollToContent: false,
         libraryItems: []
       };
-      saveData(setInitialData, curData, id, saveToFile, false);
+      saveData(setInitialData, curData, id, saveToFile, false, false);
     }, 1000);
     return () => clearInterval(saveIntervalRef.current);
   }, []);
