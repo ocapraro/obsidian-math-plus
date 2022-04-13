@@ -35,6 +35,10 @@ export default class MathPlus extends Plugin {
 			const parser = new DOMParser();
 
 			const saveToFile = async (fileName:string,data:string) => {
+				let drawingPath = this.app.vault.configDir + "/plugins/obsidian-math-plus/drawings";
+				if(!await this.app.vault.adapter.exists(drawingPath)){
+					await this.app.vault.adapter.mkdir(drawingPath);
+				}
 				const configPath = this.app.vault.configDir + "/plugins/obsidian-math-plus/drawings/"+fileName;
 				if(await this.app.vault.adapter.exists(configPath)){
 					await this.app.vault.adapter.write(configPath,data);
