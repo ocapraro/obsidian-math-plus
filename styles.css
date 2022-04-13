@@ -61,6 +61,10 @@
   margin-left: -9px;
 }
 
+.markdown-reading-view .math-svg-wrapper {
+  height: 100%;
+}
+
 /* Canvas */
 
 .excalidraw-canvas {
