@@ -47,6 +47,7 @@ export default class MathPlus extends Plugin {
 				}
 				if(await this.app.vault.adapter.exists(configPath)){
 					let svgData = await this.app.vault.adapter.read(configPath);
+					let latexEquation = el.querySelector("mjx-container") as HTMLElement;
 					el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
 					drawButton.show();
 					doneButton.hide();
@@ -54,15 +55,16 @@ export default class MathPlus extends Plugin {
 				}
 			}
 
-			const resizeUi = (id: number) => {
-				let canvas = document.getElementById(`math-canvas-${id}`);
-				if (canvas.offsetHeight<350) {
-					canvas.addClass("small-canvas");
-				}
-			}
+			// Parse Equation
+			let rawEqu = source.replace(/\|\|.+\|\|\n+/gm,"");
+			let equ = formatEquation(rawEqu);
+
+			// Render Equation
+			el.append(renderMath(equ, true));
+			await finishRenderMath();
 
 			// Render Excalidraw
-
+			let latexEquation = el.querySelector("mjx-container") as HTMLElement;
 			let blockOptions = source.match(/\|\|.+\|\|/gm)?JSON.parse(source.match(/\|\|.+\|\|/gm)[0].replace(/\|\|/gm,"")):null;
 			let blockId: number;
 			if(blockOptions) {
@@ -87,9 +89,6 @@ export default class MathPlus extends Plugin {
 			this.settings.penVisable?null:el.addClass("no-pen");
 			this.settings.textVisable?null:el.addClass("no-text");
 
-			// Parse Equation
-			let rawEqu = source.replace(/\|\|.+\|\|\n+/gm,"");
-			let equ = formatEquation(rawEqu);
 
 			// Add button group
 			const editButtonGroup = el.createEl("div",{ cls: "math-button-group"});
@@ -134,10 +133,6 @@ export default class MathPlus extends Plugin {
 				saveButton.click();
 			});
 			doneButton.hide();
-
-			// Render Equation
-			el.append(renderMath(equ, true));
-			finishRenderMath();
     });
 
 		this.addCommand({

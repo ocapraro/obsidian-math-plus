@@ -48,14 +48,15 @@
 }
 
 .math-svg-wrapper > svg {
-  height: unset;
-  width: 695px;
+  height: 100%;
+  width: unset;
   filter: var(--theme-filter);
 }
 
 .math-svg-wrapper {
   top: 0;
   position: absolute;
+  height: calc(100% + 20px);
   margin-top: -9px;
   margin-left: -9px;
 }
