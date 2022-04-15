@@ -135,6 +135,42 @@
   display: block;
 }
 
+.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical {
+  display: block;
+}
+
+.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section {
+  display: none;
+}
+
+.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 8px;
+}
+
+.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) input {
+  height: 30px;
+  caret-color: var(--caret-color);
+}
+
+.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) .popover {
+  display: none;
+}
+
+.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:last-of-type .panelColumn > * {
+  display: none;
+}
+
+.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:last-of-type .panelColumn > div:first-of-type {
+  display: block;
+}
+
+.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:last-of-type .panelColumn > h3:first-of-type {
+  display: block;
+}
+
 .App-bottom-bar.App-bottom-bar.App-bottom-bar, .HintViewer.HintViewer.HintViewer, .App-menu_bottom.App-menu_bottom.App-menu_bottom {
     display: none ;
 }
@@ -219,6 +255,7 @@
 .excalidraw section {
     position: absolute;
     right: 0;
+    background-color: var(--background-primary);
 }
 
 .excalidraw * {
@@ -228,7 +265,6 @@
 /* Small UI */
 .small-canvas section{
     max-width: 60px;
-    background-color: var(--background-primary);
     transition: max-width 300ms;
     top: unset !important;
     bottom: 0;
@@ -241,6 +277,10 @@
 
 .small-canvas section .Stack_horizontal .Stack_horizontal {
   flex-direction: row;
+}
+
+.small-canvas .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section {
+  display: none;
 }
 
 
@@ -262,9 +302,11 @@
 .theme-dark {
   --theme-filter: invert(93%) hue-rotate(180deg);
   --icon-fill-color: #ced4da;
+  --caret-color: #fff;
 }
 
 .theme-light {
   --theme-filter: none;
   --icon-fill-color: #414244;
+  --caret-color: #000;
 }

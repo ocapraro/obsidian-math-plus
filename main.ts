@@ -1,6 +1,7 @@
 import { App, Editor, Notice, Plugin, PluginSettingTab, Setting, renderMath, finishRenderMath, loadMathJax } from 'obsidian';
 import { formatEquation } from "./parser";
 import { renderCanvas } from "./view"
+import { hexToFilter } from "./colorChanger"
 
 interface MathPlusSettings {
 	selectVisable: boolean;
@@ -131,11 +132,26 @@ export default class MathPlus extends Plugin {
 			doneButton.setAttr("aria-label","Save Drawing");
 			doneButton.onClickEvent(async ()=>{
 				let saveButton = el.querySelector(".math-save-button") as HTMLElement;
-				saveButton.click();
+				if(saveButton) {
+					saveButton.click();
+				}else{
+					let svgData = await this.app.vault.adapter.read(configPath);
+					el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
+					drawButton.show();
+					doneButton.hide();
+					new Notice("Saved");
+					
+				}
 			});
 			doneButton.hide();
+
+			// // Set stroke color
+			// const root = document.querySelector('body') as HTMLElement;
+			// root.style.setProperty('--theme-filter', hexToFilter("#ffff00"));
+			// console.log(hexToFilter("#ffff00"));
     });
 
+		// Add insert math block command
 		this.addCommand({
       id: "insert-math-block",
       name: "Insert math block",

@@ -43,8 +43,8 @@ const renderFooter = () => {
 let saveTimeout;
 
 const saveData = (setInitialData, curData, id, saveToFile,closeDrawing=true,exportAsSvg=true) => {
-  clearTimeout(saveTimeout)
-
+  clearTimeout(saveTimeout);
+  
   saveTimeout = setTimeout(async() => {
     let formattedData = {...curData};
     formattedData.appState.collaborators = [];
@@ -204,7 +204,7 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
             viewModeEnabled={false}
             zenModeEnabled={false}
             gridModeEnabled={false}
-            theme={"dark"}
+            theme={document.querySelector('body').hasClass("theme-light")?"light":"dark"}
             name="Custom name of drawing"
             UIOptions={{ canvasActions: { loadScene: false } }}
             renderTopRightUI={renderTopRightUI}
