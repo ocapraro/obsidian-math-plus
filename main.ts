@@ -1,9 +1,14 @@
 import { App, Editor, Notice, Plugin, PluginSettingTab, Setting, renderMath, finishRenderMath, loadMathJax } from 'obsidian';
 import { formatEquation } from "./parser";
 import { renderCanvas } from "./view"
-import { hexToFilter } from "./colorChanger"
 
 interface MathPlusSettings {
+	// Colors
+	color1:string,
+	color2:string,
+	color3:string,
+	colorPicker:boolean,
+	// Excalidraw UI
 	selectVisable: boolean;
 	rectVisable: boolean;
 	diamondVisable: boolean;
@@ -12,9 +17,17 @@ interface MathPlusSettings {
 	lineVisable: boolean;
 	penVisable: boolean;
 	textVisable: boolean;
+	// Excalidraw Settings
+	gridModeEndabled: boolean;
 }
 
 const DEFAULT_SETTINGS: MathPlusSettings = {
+	// Colors
+	color1:"#000000",
+	color2:"#1864ab",
+	color3:"#d9480f",
+	colorPicker:false,
+	// Excalidraw UI
 	selectVisable: true,
 	rectVisable: false,
 	diamondVisable: false,
@@ -22,7 +35,9 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	arrowVisable: true,
 	lineVisable: true,
 	penVisable: true,
-	textVisable: true
+	textVisable: true,
+	// Excalidraw Settings
+	gridModeEndabled: false
 }
 
 export default class MathPlus extends Plugin {
@@ -117,8 +132,9 @@ export default class MathPlus extends Plugin {
 			drawButton.append(drawIcon.body.querySelector("svg"));
 			drawButton.setAttr("aria-label","Draw on Block");
 			drawButton.onClickEvent(async ()=>{
-				const wrapper = el.createEl("div",{cls:"excalidraw-canvas-wrapper"})
-				renderCanvas(wrapper, blockId, saveToFile);
+				const wrapper = el.createEl("div",{cls:"excalidraw-canvas-wrapper"});
+				this.settings.colorPicker?null:wrapper.addClass("hidden-color-picker");
+				renderCanvas(wrapper, blockId, saveToFile, this.settings.gridModeEndabled, [this.settings.color1,this.settings.color2,this.settings.color3]);
 				let svgWrapper = el.querySelector(".math-svg-wrapper") as HTMLElement;
 				if(svgWrapper){
 					svgWrapper.remove();
@@ -195,6 +211,47 @@ class MathPlusSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		containerEl.createEl('h2', {text: 'Obsidian Math + Settings'});
+
+
+		containerEl.createEl('h3', {text: 'Colors'});
+
+		new Setting(containerEl)
+		.setName('Color 1')
+		.addText(text => text
+		.setValue(this.plugin.settings.color1)
+		.onChange(async (value) => {
+			this.plugin.settings.color1 = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Color 2')
+		.addText(text => text
+		.setValue(this.plugin.settings.color2)
+		.onChange(async (value) => {
+			this.plugin.settings.color2 = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Color 3')
+		.addText(text => text
+		.setValue(this.plugin.settings.color3)
+		.onChange(async (value) => {
+			this.plugin.settings.color3 = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Color Picker')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.colorPicker)
+		.onChange(async (value) => {
+			this.plugin.settings.colorPicker = value;
+			await this.plugin.saveSettings();
+		}));
+
+		
 		containerEl.createEl('h3', {text: 'Excalidraw UI'});
 
 		new Setting(containerEl)
@@ -274,6 +331,16 @@ class MathPlusSettingTab extends PluginSettingTab {
 		.setValue(this.plugin.settings.textVisable)
 		.onChange(async (value) => {
 			this.plugin.settings.textVisable = value;
+			await this.plugin.saveSettings();
+		}));
+
+		containerEl.createEl('h3', {text: 'Excalidraw Settings'});
+		new Setting(containerEl)
+		.setName('Grid Mode')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.gridModeEndabled)
+		.onChange(async (value) => {
+			this.plugin.settings.gridModeEndabled = value;
 			await this.plugin.saveSettings();
 		}));
 	}

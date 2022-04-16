@@ -14,6 +14,29 @@
   min-height: 100px;
 }
 
+.math-pill {
+  height: 3.5px;
+  width: 50%;
+  background-color: var(--background-modifier-border);
+  position: absolute;
+  top: 4px;
+  border-radius: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+.math-pill:after{
+  content: "";
+  padding: 0;
+  position: absolute;
+  left: -5px;
+  display: block;
+  width: calc(100% + 10px);
+  height: 12px;
+  top: -5px;
+} 
+
 .math-button-group {
     margin-right: 21px;
     position: absolute;
@@ -150,6 +173,10 @@
   margin-bottom: 8px;
 }
 
+.hidden-color-picker .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) {
+  display: none;
+}
+
 .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) input {
   height: 30px;
   caret-color: var(--caret-color);
@@ -222,7 +249,7 @@
     transition: opacity 300ms;
 }
 
-.cm-preview-code-block:hover .App-toolbar-container .Island.App-toolbar, .cm-preview-code-block:hover button, .cm-preview-code-block:hover .math-button {
+.cm-preview-code-block:hover .App-toolbar-container .Island.App-toolbar, .cm-preview-code-block:hover button, .cm-preview-code-block:hover .math-button,.cm-preview-code-block:hover .math-color-box {
     opacity: 1 !important;
 }
 
@@ -260,6 +287,57 @@
 
 .excalidraw * {
   caret-color: #000;
+}
+
+/* Color Picker */
+.math-color-swatch {
+  width: 20px;
+  height: 20px;
+  background-color: #000;
+  border-radius: 50%;
+  cursor: pointer;
+  filter: var(--theme-filter);
+}
+
+.math-color-box {
+  display: flex;
+  background-color: var(--background-primary);
+  position: absolute;
+  gap: 10px;
+  left: 50%;
+  bottom: -8px;
+  z-index: 2;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  border-radius: 100px;
+  border: 2px solid var(--background-modifier-border);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 1%), 1px 1px 5px rgb(0 0 0 / 12%);
+  padding-top: 15px;
+  opacity: 0;
+  transition: bottom 200ms, opacity 300ms;
+}
+
+.math-color-box.minimized:hover {
+  bottom: -50px;
+}
+
+.math-color-box.minimized {
+  bottom: -56px;
+}
+
+.math-color-swatch.selected {
+  cursor: unset;
+}
+
+.math-color-swatch.selected:before {
+  filter: var(--theme-filter);
+  content: " ";
+  border: 1.5px solid var(--background-primary);
+  border-radius: 100px;
+  /* height: 10px; */
+  height: 17px;
+  transform: scale(0.8);
+  display: block;
 }
 
 /* Small UI */

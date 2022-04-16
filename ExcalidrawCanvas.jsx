@@ -7,6 +7,7 @@ import Excalidraw, {
   serializeAsJSON
 } from "@excalidraw/excalidraw";
 import fs from "fs";
+import { ColorSwatch } from "./components/ColorSwatch"
 // import InitialData from "./initialData";
 // import initialData from "./initialData";
 
@@ -40,24 +41,21 @@ const renderFooter = () => {
   );
 };
 
-let saveTimeout;
-
-const saveData = (setInitialData, curData, id, saveToFile,closeDrawing=true,exportAsSvg=true) => {
-  clearTimeout(saveTimeout);
-  
-  saveTimeout = setTimeout(async() => {
-    let formattedData = {...curData};
-    formattedData.appState.collaborators = [];
-    setInitialData(formattedData);
-    localStorage.setItem(`excalidrawMathData-${id}`, JSON.stringify(formattedData));
-    let lastId = localStorage.getItem("math-max-id");
-    if (parseInt(lastId)<id){
-      localStorage.setItem("math-max-id", id);
-    }
-    if(exportAsSvg){
-      await exportSVG({...formattedData}, id, saveToFile,closeDrawing);
-    }
-  }, 500)
+const saveData = async (setInitialData, curData, id, saveToFile,closeDrawing=true,exportAsSvg=true) => {
+  let formattedData = {...curData};
+  formattedData.appState.collaborators = [];
+  setInitialData((data)=>{
+    formattedData.appState.currentItemStrokeColor = data.appState.currentItemStrokeColor;
+    return formattedData
+  });
+  localStorage.setItem(`excalidrawMathData-${id}`, JSON.stringify(formattedData));
+  let lastId = localStorage.getItem("math-max-id");
+  if (parseInt(lastId)<id){
+    localStorage.setItem("math-max-id", id);
+  }
+  if(exportAsSvg){
+    await exportSVG({...formattedData}, id, saveToFile,closeDrawing);
+  }
 }
 
 
@@ -95,7 +93,7 @@ const exportSVG = async (data, id, saveToFile, closeDrawing=true) => {
   saveToFile("data-"+id+".svg",svg.outerHTML, closeDrawing);
 }
 
-export function ExcalidrawCanvas({ id, saveToFile }) {
+export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors }) {
   const excalidrawRef = useRef(null);
   const dimensionRef = useRef();
   const saveIntervalRef = useRef(null);
@@ -103,10 +101,12 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
   JSON.parse(localStorage.getItem(`excalidrawMathData-${id}`))
   :{
     elements: [],
-    appState: { viewBackgroundColor: "#fff0", currentItemFontFamily: 1 },
+    appState: { viewBackgroundColor: "#fff0", currentItemFontFamily: 1, currentItemStrokeColor:"#000" },
     scrollToContent: false,
     libraryItems: []
   });
+  // let colors = ["#000","#1864ab","#d9480f"];
+  let canvas = document.getElementById(`math-canvas-${id}`);
 
   const initialStatePromiseRef = useRef({ promise: null });
   if (!initialStatePromiseRef.current.promise) {
@@ -136,10 +136,18 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
         scrollToContent: false,
         libraryItems: []
       };
+      // auto save
       saveData(setInitialData, curData, id, saveToFile, false, false);
     }, 1000);
     return () => clearInterval(saveIntervalRef.current);
   }, []);
+
+  useEffect(()=>{
+    if(excalidrawRef.current){
+      excalidrawRef.current.updateScene(InitialData);
+      window.dispatchEvent(new Event("resize"));
+    }
+  },[InitialData]);
 
 
   const onLinkOpen = useCallback((element, event) => {
@@ -157,12 +165,74 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
     }
   }, []);
 
+  const switchColor = async (color)=>{
+    let appState = excalidrawRef.current.getAppState();
+    let elements = excalidrawRef.current.getSceneElements();
+    let selectedIds = Object.keys(appState.selectedElementIds);
+    let canvas = document.getElementById(`math-canvas-${id}`);
+    let finalData;
+    if(canvas){
+      // let picker = canvas.querySelector(".Stack.Stack_vertical section:not(:first-of-type) .color-picker-input");
+      // if(picker) {
+      //   picker.value = color.slice(1);
+      // }
+      for (let i = 0; i < selectedIds.length; i++) {
+        let selectedElement = elements.find(elem => (elem.id===selectedIds[i]));
+        if(selectedElement){
+          let selectedElementIndex = elements.indexOf(selectedElement);
+          setInitialData((data)=>{
+            let formattedData = {elements:[...elements],appState:{...appState}};
+            formattedData.elements[selectedElementIndex].strokeColor=color;
+            formattedData.appState.currentItemStrokeColor = color;
+            finalData = formattedData
+            return formattedData;
+          });
+        }
+      }
+      if(selectedIds.length<2){
+        setInitialData((data)=>{
+          let formattedData = {elements:[...elements],appState:{...appState}};
+          formattedData.appState.currentItemStrokeColor = color;
+          return formattedData;
+        });
+      }
+    }
+  }
+
 
   return (
     <div className="excalidraw-canvas"style={{
       fontFamily: "sans-serif",
       textAlign: "center",
       height: "100%"
+    }}onClick={(e)=>{
+      if(!e.target.hasClass("ToolIcon_type_radio")) {
+        let appState = excalidrawRef.current.getAppState();
+        let elements = excalidrawRef.current.getSceneElements();
+        let selectedIds = Object.keys(appState.selectedElementIds);
+        let canvas = document.getElementById(`math-canvas-${id}`);
+        if(canvas){
+          // let picker = canvas.querySelector(".Stack.Stack_vertical section:not(:first-of-type) .color-picker-input");
+          // if(picker) {
+          //   setInitialData((data)=>{
+          //     let formattedData = {elements:[...elements],appState:{...appState}};
+          //     formattedData.appState.currentItemStrokeColor = `#${picker.value}`;
+          //     return formattedData;
+          //   });
+          // }
+          if (selectedIds.length>1){
+            let selectedElement = elements.find(elem => (elem.id===selectedIds[0]));
+            if(selectedElement){
+              let selectedElementIndex = elements.indexOf(selectedElement);
+              setInitialData((data)=>{
+                let formattedData = {elements:[...elements],appState:{...appState}};
+                formattedData.appState.currentItemStrokeColor = formattedData.elements[selectedElementIndex].strokeColor;
+                return formattedData;
+              });
+            }
+          }
+        }
+      }
     }}>
       <button className="math-save-button" onClick={async ()=>{
         let curData = {
@@ -195,6 +265,32 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
           backgroundColor: "#fff0",
           opacity:0
         }}>
+          <div className="math-color-box">
+            <div className="math-pill" onClick={()=>{
+              canvas.querySelector(".math-color-box").classList.toggle("minimized");
+            }}></div>
+            <ColorSwatch 
+              color={colors[0]} 
+              currColor={InitialData.appState.currentItemStrokeColor}
+              onClick={()=>{
+                switchColor(colors[0]);
+              }}
+            />
+            <ColorSwatch
+              color={colors[1]}
+              currColor={InitialData.appState.currentItemStrokeColor}
+              onClick={()=>{
+                switchColor(colors[1]);
+              }}
+            />
+            <ColorSwatch 
+              color={colors[2]} 
+              currColor={InitialData.appState.currentItemStrokeColor}
+              onClick={()=>{
+                switchColor(colors[2]);
+              }}
+            />
+          </div>
           <Excalidraw
             ref={excalidrawRef}
             initialData={InitialData}
@@ -203,7 +299,7 @@ export function ExcalidrawCanvas({ id, saveToFile }) {
             }
             viewModeEnabled={false}
             zenModeEnabled={false}
-            gridModeEnabled={false}
+            gridModeEnabled={gridMode}
             theme={document.querySelector('body').hasClass("theme-light")?"light":"dark"}
             name="Custom name of drawing"
             UIOptions={{ canvasActions: { loadScene: false } }}
