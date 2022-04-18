@@ -15,16 +15,19 @@ const resolvablePromise = () => {
 };
 
 const saveData = async (setInitialData, curData, id, saveToFile,closeDrawing=true,exportAsSvg=true) => {
+  const prevData = localStorage.getItem(`excalidrawMathData-${id}`);
   let formattedData = {...curData};
-  formattedData.appState.collaborators = [];
-  setInitialData((data)=>{
-    formattedData.appState.currentItemStrokeColor = data.appState.currentItemStrokeColor;
-    return formattedData
-  });
-  localStorage.setItem(`excalidrawMathData-${id}`, JSON.stringify(formattedData));
-  let lastId = localStorage.getItem("math-max-id");
-  if (parseInt(lastId)<id){
-    localStorage.setItem("math-max-id", id);
+  formattedData.appState.collaborators = [];;
+  if(prevData != JSON.stringify(formattedData)){
+    setInitialData((data)=>{
+      formattedData.appState.currentItemStrokeColor = data.appState.currentItemStrokeColor;
+      return formattedData
+    });
+    localStorage.setItem(`excalidrawMathData-${id}`, JSON.stringify(formattedData));
+    let lastId = localStorage.getItem("math-max-id");
+    if (parseInt(lastId)<id){
+      localStorage.setItem("math-max-id", id);
+    }
   }
   if(exportAsSvg){
     await exportSVG({...formattedData}, id, saveToFile,closeDrawing);
