@@ -1,15 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import Excalidraw, {
-  exportToCanvas,
-  exportToSvg,
-  exportWithDarkMode,
-  exportToBlob,
-  serializeAsJSON
-} from "@excalidraw/excalidraw";
-import fs from "fs";
+import Excalidraw, { exportToSvg } from "@excalidraw/excalidraw";
 import { ColorSwatch } from "./components/ColorSwatch"
-// import InitialData from "./initialData";
-// import initialData from "./initialData";
 
 const resolvablePromise = () => {
   let resolve;
@@ -69,7 +60,7 @@ const exportSVG = async (data, id, saveToFile, closeDrawing=true) => {
     "x": 1,
     "y": 1,
     "width": 10000,
-    "height": canvas.offsetHeight,
+    "height": canvas?canvas.offsetHeight:1,
     "angle": 0,
     "strokeColor": "transparent",
     "backgroundColor": "transparent",
@@ -105,8 +96,9 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors }) {
     scrollToContent: false,
     libraryItems: []
   });
-  // let colors = ["#000","#1864ab","#d9480f"];
+
   let canvas = document.getElementById(`math-canvas-${id}`);
+  let mathBlock = document.querySelector(`.math-block-${id}`);
 
   const initialStatePromiseRef = useRef({ promise: null });
   if (!initialStatePromiseRef.current.promise) {
@@ -137,7 +129,12 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors }) {
         libraryItems: []
       };
       // auto save
-      saveData(setInitialData, curData, id, saveToFile, false, false);
+      if(document.querySelector(`.math-block-${id}`)){
+        saveData(setInitialData, curData, id, saveToFile, false, false);
+      }else{
+        saveData(setInitialData, curData, id, saveToFile, true, true);
+        clearInterval(saveIntervalRef.current);
+      }
     }, 1000);
     return () => clearInterval(saveIntervalRef.current);
   }, []);
@@ -172,10 +169,6 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors }) {
     let canvas = document.getElementById(`math-canvas-${id}`);
     let finalData;
     if(canvas){
-      // let picker = canvas.querySelector(".Stack.Stack_vertical section:not(:first-of-type) .color-picker-input");
-      // if(picker) {
-      //   picker.value = color.slice(1);
-      // }
       for (let i = 0; i < selectedIds.length; i++) {
         let selectedElement = elements.find(elem => (elem.id===selectedIds[i]));
         if(selectedElement){
@@ -212,14 +205,6 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors }) {
         let selectedIds = Object.keys(appState.selectedElementIds);
         let canvas = document.getElementById(`math-canvas-${id}`);
         if(canvas){
-          // let picker = canvas.querySelector(".Stack.Stack_vertical section:not(:first-of-type) .color-picker-input");
-          // if(picker) {
-          //   setInitialData((data)=>{
-          //     let formattedData = {elements:[...elements],appState:{...appState}};
-          //     formattedData.appState.currentItemStrokeColor = `#${picker.value}`;
-          //     return formattedData;
-          //   });
-          // }
           if (selectedIds.length>1){
             let selectedElement = elements.find(elem => (elem.id===selectedIds[0]));
             if(selectedElement){
@@ -261,7 +246,7 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors }) {
           e.stopPropagation();
         }}
       >
-        <div className={"excalidraw-wrapper"+(document.querySelector(`.math-block-${id}`).offsetHeight<350?" small-canvas":"")} id={`math-canvas-${id}`} ref={dimensionRef} style={{
+        <div className={"excalidraw-wrapper"+(mathBlock?(mathBlock.offsetHeight<350?" small-canvas":""):"")} id={`math-canvas-${id}`} ref={dimensionRef} style={{
           backgroundColor: "#fff0",
           opacity:0
         }}>

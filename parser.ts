@@ -113,5 +113,3 @@ export const formatEquation = (str: string) => {
 
   return formattedString
 }
-
-formatEquation("a^a^2")
