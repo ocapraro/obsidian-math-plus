@@ -52,13 +52,13 @@ export default class MathPlus extends Plugin {
 			const vault = this.app.vault;
 			const adapter = vault.adapter;
 
-			const saveToFile = async (fileName:string,data:string,closeDrawing=true) => {
-				let drawingPath = vault.configDir + "/plugins/obsidian-math-plus/drawings";
+			const saveToFile = async (fileName:string, data:string, directory:string, closeDrawing=true) => {
+				let directoryPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}`;
 				// If the drawings directory isn't there, make it
-				if(!await adapter.exists(drawingPath)){
-					await adapter.mkdir(drawingPath);
+				if(!await adapter.exists(directoryPath)){
+					await adapter.mkdir(directoryPath);
 				}
-				const configPath = vault.configDir + "/plugins/obsidian-math-plus/drawings/"+fileName;
+				const configPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}/${fileName}`;
 				if(await adapter.exists(configPath)){
 					await adapter.write(configPath,data);
 				}else{
@@ -73,6 +73,14 @@ export default class MathPlus extends Plugin {
 						new Notice("Saved");
 					}
 				}
+			}
+
+			const readFile = async (fileName:string, directory:string) => {
+				const configPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}/${fileName}`;
+				if(await adapter.exists(configPath)){
+					return await adapter.read(configPath);
+				}
+				return null
 			}
 
 			// Parse Equation
@@ -136,7 +144,8 @@ export default class MathPlus extends Plugin {
 			drawButton.onClickEvent(async ()=>{
 				const wrapper = el.createEl("div",{cls:"excalidraw-canvas-wrapper"});
 				this.settings.colorPicker?null:wrapper.addClass("hidden-color-picker");
-				renderCanvas(wrapper, blockId, saveToFile, this.settings.gridModeEndabled, [this.settings.color1,this.settings.color2,this.settings.color3]);
+				let data =  await readFile("data-"+blockId+".json", "excalidraw-files");
+				renderCanvas(wrapper, blockId, saveToFile, this.settings.gridModeEndabled, [this.settings.color1,this.settings.color2,this.settings.color3],readFile,data);
 				let svgWrapper = el.querySelector(".math-svg-wrapper") as HTMLElement;
 				if(svgWrapper){
 					svgWrapper.remove();
@@ -170,10 +179,9 @@ export default class MathPlus extends Plugin {
       name: "Insert math block",
 			hotkeys: [{ modifiers: ["Mod"], key: "m" }],
       editorCallback: (editor: Editor) => {
-				let id = parseInt(localStorage.getItem("math-max-id"))+1;
+				let id = Math.floor(Math.random() * Date.now());
         editor.replaceRange("```math\n||{\"id\":"+id+"}||\n\n\n```", editor.getCursor());
 				editor.setCursor(editor.getCursor().line+3);
-				localStorage.setItem("math-max-id", id.toString());
       },
     });
 
