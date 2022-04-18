@@ -14,24 +14,6 @@ const resolvablePromise = () => {
   return promise;
 };
 
-const renderTopRightUI = () => {
-  return (
-    <button onClick={() => alert("This is dummy top right UI")}>
-      {" "}
-      Click me{" "}
-    </button>
-  );
-};
-
-const renderFooter = () => {
-  return (
-    <button onClick={() => alert("This is dummy footer")}>
-      {" "}
-      custom footer{" "}
-    </button>
-  );
-};
-
 const saveData = async (setInitialData, curData, id, saveToFile,closeDrawing=true,exportAsSvg=true) => {
   let formattedData = {...curData};
   formattedData.appState.collaborators = [];
@@ -286,10 +268,8 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors }) {
             zenModeEnabled={false}
             gridModeEnabled={gridMode}
             theme={document.querySelector('body').hasClass("theme-light")?"light":"dark"}
-            name="Custom name of drawing"
+            name="Obsidian Math Plus Drawing"
             UIOptions={{ canvasActions: { loadScene: false } }}
-            renderTopRightUI={renderTopRightUI}
-            renderFooter={renderFooter}
             onLinkOpen={onLinkOpen}
           />
         </div>

@@ -47,9 +47,6 @@ const formatOperator = (str: string, op: string, strFormat: Function) => {
       if((substituteString.split("%33o").length-1)>0){
         for (let i = 0; i < substitutes.length; i++) {
           const substitute = substitutes[i];
-          // console.log(substitutes);
-          // console.log(substitute.id);
-          // console.log(substituteString);
           substituteString = substituteString.replace(substitute.id,substitute.formattedStr);
         }
       }else{
@@ -102,11 +99,9 @@ export const formatEquation = (str: string) => {
     }
   ];
   let formattedString = " "+formatGroups(str);
-  // console.log(formattedString);
   for (let i = 0; i < operators.length; i++) {
     const op = operators[i];
     formattedString = formatOperator(formattedString,op.op,op.format);
-    // console.log(formattedString);
   }
   formattedString = addLines(formattedString);
 

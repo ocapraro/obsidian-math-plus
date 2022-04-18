@@ -54,6 +54,7 @@ export default class MathPlus extends Plugin {
 
 			const saveToFile = async (fileName:string,data:string,closeDrawing=true) => {
 				let drawingPath = vault.configDir + "/plugins/obsidian-math-plus/drawings";
+				// If the drawings directory isn't there, make it
 				if(!await adapter.exists(drawingPath)){
 					await adapter.mkdir(drawingPath);
 				}
@@ -83,7 +84,6 @@ export default class MathPlus extends Plugin {
 			await finishRenderMath();
 
 			// Render Excalidraw
-			let latexEquation = el.querySelector("mjx-container") as HTMLElement;
 			let blockOptions = source.match(/\|\|.+\|\|/gm)?JSON.parse(source.match(/\|\|.+\|\|/gm)[0].replace(/\|\|/gm,"")):null;
 			let blockId: number;
 			if(blockOptions) {
@@ -162,11 +162,6 @@ export default class MathPlus extends Plugin {
 				}
 			});
 			doneButton.hide();
-
-			// // Set stroke color
-			// const root = document.querySelector('body') as HTMLElement;
-			// root.style.setProperty('--theme-filter', hexToFilter("#ffff00"));
-			// console.log(hexToFilter("#ffff00"));
     });
 
 		// Add insert math block command
@@ -215,6 +210,7 @@ class MathPlusSettingTab extends PluginSettingTab {
 		containerEl.createEl('h2', {text: 'Obsidian Math + Settings'});
 
 
+		// Colors
 		containerEl.createEl('h3', {text: 'Colors'});
 
 		new Setting(containerEl)
@@ -253,7 +249,8 @@ class MathPlusSettingTab extends PluginSettingTab {
 			await this.plugin.saveSettings();
 		}));
 
-		
+
+		// Excalidraw UI
 		containerEl.createEl('h3', {text: 'Excalidraw UI'});
 
 		new Setting(containerEl)
@@ -336,7 +333,10 @@ class MathPlusSettingTab extends PluginSettingTab {
 			await this.plugin.saveSettings();
 		}));
 
+
+		// Excalidraw Settings
 		containerEl.createEl('h3', {text: 'Excalidraw Settings'});
+
 		new Setting(containerEl)
 		.setName('Grid Mode')
 		.addToggle(toggle => toggle
