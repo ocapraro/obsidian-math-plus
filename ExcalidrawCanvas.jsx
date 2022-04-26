@@ -14,8 +14,8 @@ const resolvablePromise = () => {
   return promise;
 };
 
-const saveData = async (setInitialData, curData, id, saveToFile, readFile, closeDrawing=true, exportAsSvg=true) => {
-  const prevData = await readFile("data-"+id+".json", "excalidraw-files");
+const saveData = async (setInitialData, curData, id, saveToFile, readFile, prevData, setData, closeDrawing=true, exportAsSvg=true) => {
+  // const prevData = await readFile("data-"+id+".json", "excalidraw-files");
   let formattedData = {...curData};
   formattedData.appState.collaborators = [];
   if(prevData != JSON.stringify(formattedData)){
@@ -23,6 +23,7 @@ const saveData = async (setInitialData, curData, id, saveToFile, readFile, close
       formattedData.appState.currentItemStrokeColor = data.appState.currentItemStrokeColor;
       return formattedData
     });
+    setData(JSON.stringify(formattedData));
     saveToFile("data-"+id+".json", JSON.stringify(formattedData), "excalidraw-files", false);
   }
   if(exportAsSvg){
@@ -79,6 +80,7 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors, readFile, p
       libraryItems: []
     }
   );
+  const [lastSaveData, setLastSaveData] = useState(prevData||"");
 
   let canvas = document.getElementById(`math-canvas-${id}`);
   let mathBlock = document.querySelector(`.math-block-${id}`);
@@ -113,9 +115,9 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors, readFile, p
       };
       // auto save
       if(document.querySelector(`.math-block-${id}`)){
-        saveData(setInitialData, curData, id, saveToFile,readFile, false, false);
+        saveData(setInitialData, curData, id, saveToFile,readFile, lastSaveData, setLastSaveData, false, false);
       }else{
-        saveData(setInitialData, curData, id, saveToFile,readFile, true, true);
+        saveData(setInitialData, curData, id, saveToFile,readFile, lastSaveData, setLastSaveData, true, true);
         clearInterval(saveIntervalRef.current);
       }
     }, 1000);
@@ -208,7 +210,7 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors, readFile, p
           scrollToContent: false,
           libraryItems: []
         };
-        saveData(setInitialData, curData, id, saveToFile, readFile);
+        saveData(setInitialData, curData, id, saveToFile, readFile, lastSaveData, setLastSaveData);
         clearInterval(saveIntervalRef.current);
       }} style={{
         zIndex:5,
