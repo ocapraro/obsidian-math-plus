@@ -67,7 +67,7 @@ export default class MathPlus extends Plugin {
 				if(await adapter.exists(configPath)){
 					if(closeDrawing){
 						let svgData = await adapter.read(configPath);
-						el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
+						el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
 						drawButton.show();
 						doneButton.hide();
 						new Notice("Saved");
@@ -100,7 +100,7 @@ export default class MathPlus extends Plugin {
 			const configPath = vault.configDir + `/plugins/obsidian-math-plus/drawings/data-${blockId}.svg`;
 			if(await adapter.exists(configPath)){
 				let svgData = await adapter.read(configPath);
-				el.append(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
+				el.append(parser.parseFromString(`<div class="math-svg-wrapper">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
 			}
 
 			// add id class to block
@@ -163,7 +163,7 @@ export default class MathPlus extends Plugin {
 					saveButton.click();
 				}else{
 					let svgData = await adapter.read(configPath);
-					el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData}</div>`, "text/html").body.querySelector("div"));
+					el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
 					drawButton.show();
 					doneButton.hide();
 					new Notice("Saved");
