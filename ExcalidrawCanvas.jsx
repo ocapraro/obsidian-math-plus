@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import Excalidraw, { exportToSvg } from "@excalidraw/excalidraw";
 import { ColorSwatch } from "./components/ColorSwatch"
+import {createRoot} from 'react-dom/client';
+import { unmountComponentAtNode } from "react-dom";
 
 const resolvablePromise = () => {
   let resolve;
@@ -14,7 +16,7 @@ const resolvablePromise = () => {
   return promise;
 };
 
-const saveData = async (setInitialData, curData, id, saveToFile, readFile, prevData, setData, closeDrawing=true, exportAsSvg=true) => {
+const saveData = async (root, setInitialData, curData, id, saveToFile, readFile, prevData, setData, closeDrawing=true, exportAsSvg=true) => {
   // const prevData = await readFile("data-"+id+".json", "excalidraw-files");
   let formattedData = {...curData};
   formattedData.appState.collaborators = [];
@@ -25,6 +27,11 @@ const saveData = async (setInitialData, curData, id, saveToFile, readFile, prevD
     });
     setData(JSON.stringify(formattedData));
     saveToFile("data-"+id+".json", JSON.stringify(formattedData), "excalidraw-files", false);
+  }
+  if(closeDrawing){
+    // unmountComponentAtNode(document.querySelector(`.math-block-${id} .excalidraw-canvas-wrapper`));
+    // const root = createRoot(document.querySelector(`.math-block-${id} .excalidraw-canvas-wrapper`));
+    root.unmount();
   }
   if(exportAsSvg){
     await exportSVG({...formattedData}, id, saveToFile,closeDrawing);
@@ -66,7 +73,7 @@ const exportSVG = async (data, id, saveToFile, closeDrawing=true) => {
   saveToFile("data-"+id+".svg",svg.outerHTML, "drawings", closeDrawing);
 }
 
-export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors, readFile, prevData }) {
+export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors, readFile, prevData, root }) {
   const excalidrawRef = useRef(null);
   const dimensionRef = useRef();
   const saveIntervalRef = useRef(null);
@@ -115,9 +122,9 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors, readFile, p
       };
       // auto save
       if(document.querySelector(`.math-block-${id}`)){
-        saveData(setInitialData, curData, id, saveToFile,readFile, lastSaveData, setLastSaveData, false, false);
+        saveData(root, setInitialData, curData, id, saveToFile,readFile, lastSaveData, setLastSaveData, false, false);
       }else{
-        saveData(setInitialData, curData, id, saveToFile,readFile, lastSaveData, setLastSaveData, true, true);
+        saveData(root, setInitialData, curData, id, saveToFile,readFile, lastSaveData, setLastSaveData, true, true);
         clearInterval(saveIntervalRef.current);
       }
     }, 1000);
@@ -210,7 +217,7 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors, readFile, p
           scrollToContent: false,
           libraryItems: []
         };
-        saveData(setInitialData, curData, id, saveToFile, readFile, lastSaveData, setLastSaveData);
+        saveData(root, setInitialData, curData, id, saveToFile, readFile, lastSaveData, setLastSaveData);
         clearInterval(saveIntervalRef.current);
       }} style={{
         zIndex:5,
