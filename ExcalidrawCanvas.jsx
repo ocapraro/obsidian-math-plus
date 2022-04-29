@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import Excalidraw, { exportToSvg } from "@excalidraw/excalidraw";
 import { ColorSwatch } from "./components/ColorSwatch"
-import {createRoot} from 'react-dom/client';
-import { unmountComponentAtNode } from "react-dom";
 
 const resolvablePromise = () => {
   let resolve;
