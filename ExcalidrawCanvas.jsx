@@ -243,7 +243,7 @@ export function ExcalidrawCanvas({ id, saveToFile, gridMode, colors, readFile, p
         }}>
           <div className="math-color-box">
             <div className="math-pill" onClick={()=>{
-              canvas.querySelector(".math-color-box").classList.toggle("minimized");
+              document.getElementById(`math-canvas-${id}`).querySelector(".math-color-box").classList.toggle("minimized");
             }}></div>
             <ColorSwatch 
               color={colors[0]} 
