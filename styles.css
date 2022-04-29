@@ -71,9 +71,11 @@
 }
 
 .math-svg-wrapper > svg {
-  height: 100%;
+  height: calc(100% + 500px);
   width: unset;
   filter: var(--theme-filter);
+  margin-left: -500px;
+  margin-top: -500px;
 }
 
 .math-svg-wrapper {

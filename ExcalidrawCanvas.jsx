@@ -44,8 +44,8 @@ const exportSVG = async (data, id, saveToFile, closeDrawing=true) => {
   formattedData.elements.unshift({
     "id": "8CNL550q56lrGZ4uWepQE",
     "type": "rectangle",
-    "x": 1,
-    "y": 1,
+    "x": -500,
+    "y": -500,
     "width": 10000,
     "height": canvas?canvas.offsetHeight:1,
     "angle": 0,
