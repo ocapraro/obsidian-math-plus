@@ -143,6 +143,9 @@ export default class MathPlus extends Plugin {
 			drawButton.setAttr("aria-label","Draw on Block");
 			drawButton.onClickEvent(async ()=>{
 				const wrapper = el.createEl("div",{cls:"excalidraw-canvas-wrapper"});
+				if(el.clientHeight<=100){
+					el.addClass("small-math-block")
+				}
 				this.settings.colorPicker?null:wrapper.addClass("hidden-color-picker");
 				let data =  await readFile("data-"+blockId+".json", "excalidraw-files");
 				renderCanvas(wrapper, blockId, saveToFile, this.settings.gridModeEndabled, [this.settings.color1,this.settings.color2,this.settings.color3],readFile,data);

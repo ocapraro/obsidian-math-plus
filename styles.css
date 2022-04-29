@@ -364,6 +364,18 @@
   display: none;
 }
 
+/* Small Math block */
+.small-math-block .math-color-box {
+  bottom: 2px;
+}
+
+.small-math-block .math-color-box.minimized:hover {
+  bottom: -34px;
+}
+
+.small-math-block .math-color-box.minimized {
+  bottom: -40px;
+}
 
 /* Vars */
 .excalidraw {
