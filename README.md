@@ -24,6 +24,12 @@ Here you can change the three default colors you can pick from while taking note
 
 ![colors settings](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/0.2.4/assets/colors-settings.png)
 
+**Math Block Size**
+
+This allows you to change the size of the math blocks.
+
+![math block size settings](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/master/assets/math-block-size-settings.png)
+
 **Excalidraw UI**
 
 Excalidraw has a lot of drawing tools which you can toggle on or off here based on your needs.
