@@ -8,6 +8,8 @@ interface MathPlusSettings {
 	color2:string,
 	color3:string,
 	colorPicker:boolean,
+	// Math Block Size
+	minHeight:string,
 	// Excalidraw UI
 	selectVisable: boolean;
 	rectVisable: boolean;
@@ -27,6 +29,8 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	color2:"#1864ab",
 	color3:"#d9480f",
 	colorPicker:false,
+	// Math Block Size
+	minHeight:"100",
 	// Excalidraw UI
 	selectVisable: true,
 	rectVisable: false,
@@ -116,6 +120,9 @@ export default class MathPlus extends Plugin {
 			this.settings.penVisable?null:el.addClass("no-pen");
 			this.settings.textVisable?null:el.addClass("no-text");
 
+			// Set Math Block Minimum Height
+			el.addClass(`min-height-${this.settings.minHeight}`);
+
 
 			// Add button group
 			const editButtonGroup = el.createEl("div",{ cls: "math-button-group"});
@@ -143,7 +150,7 @@ export default class MathPlus extends Plugin {
 			drawButton.setAttr("aria-label","Draw on Block");
 			drawButton.onClickEvent(async ()=>{
 				const wrapper = el.createEl("div",{cls:"excalidraw-canvas-wrapper"});
-				if(el.clientHeight<=100){
+				if(el.clientHeight<=parseInt(this.settings.minHeight)){
 					el.addClass("small-math-block")
 				}
 				this.settings.colorPicker?null:wrapper.addClass("hidden-color-picker");
@@ -257,6 +264,22 @@ class MathPlusSettingTab extends PluginSettingTab {
 		.setValue(this.plugin.settings.colorPicker)
 		.onChange(async (value) => {
 			this.plugin.settings.colorPicker = value;
+			await this.plugin.saveSettings();
+		}));
+
+
+		// Math Block Size
+		containerEl.createEl('h3', {text: 'Math Block Size'});
+
+		new Setting(containerEl)
+		.setName('Minimum Block Height')
+		.addDropdown( dropdown => dropdown
+		.addOption("100","100")
+		.addOption("200","200")
+		.addOption("300","300")
+		.setValue(this.plugin.settings.minHeight)
+		.onChange(async (value) => {
+			this.plugin.settings.minHeight = value;
 			await this.plugin.saveSettings();
 		}));
 
