@@ -74,6 +74,18 @@ const addLines = (str: string) => {
 export const formatEquation = (str: string) => {
   const operators = [
     {
+      op:"\\if",
+      format:(s1: string,s2: string)=>{return `${s1}{\\text{if }}${s2}`}
+    },
+    {
+      op:"\\then",
+      format:(s1: string,s2: string)=>{return `${s1}{\\text{then }}${s2}`}
+    },
+    {
+      op:"\\or",
+      format:(s1: string,s2: string)=>{return `${s1}{\\text{ or }}${s2}`}
+    },
+    {
       op:"^",
       format:(s1: string,s2: string)=>{return `{{${s1}}\^{${s2}}}`}
     },
