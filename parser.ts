@@ -94,6 +94,10 @@ export const formatEquation = (str: string) => {
       format:(s1: string,s2: string)=>{return `{{${s1}}_{${s2}}}`}
     },
     {
+      op:"!",
+      format:(s1: string,s2: string)=>{return `{${s1}!}${s2}`}
+    },
+    {
       op:"/",
       format:(s1: string,s2: string)=>{return `\\frac{${s1}}{${s2}}`}
     },
