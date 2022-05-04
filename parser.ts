@@ -60,8 +60,11 @@ const formatOperator = (str: string, op: string, strFormat: Function) => {
 }
 
 const formatGroups = (str: string) => {
+  // Wrap parentheses in group tags
   let formattedString = str.replace(/\)/g, ')}').replace(/\(/g, '{(');
+  // Wrap decimles in group tags
   formattedString = formattedString.replace(/[0-9.][0-9.]+/ig, "{$&}");
+  // Wrap \infty in group tags
   formattedString = formattedString.replace(/\\infty/ig, "{$&}");
   return formattedString
 }
@@ -112,6 +115,10 @@ export const formatEquation = (str: string) => {
     {
       op:"\\is",
       format:(s1: string,s2: string)=>{return `${s1}\\sum\\limits_{n=${s2}}^{\\infty}`}
+    },
+    {
+      op:"\\abs",
+      format:(s1: string,s2: string)=>{return `${s1}{|${s2}|}`}
     }
   ];
   let formattedString = " "+formatGroups(str);
