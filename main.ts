@@ -35,7 +35,7 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	// Math Block Size
 	minHeight:"100",
 	// Live Preview
-	livePreview:true,
+	livePreview:false,
 	// Excalidraw UI
 	selectVisable: true,
 	rectVisable: false,
@@ -269,7 +269,7 @@ export default class MathPlus extends Plugin {
 			hotkeys: [{ modifiers: ["Mod"], key: "m" }],
       editorCallback: (editor: Editor) => {
 				let id = Math.floor(Math.random() * Date.now());
-        editor.replaceRange("```math\n||{\"id\":"+id+"}||\n\n\n```", editor.getCursor());
+        editor.replaceRange("```math\n||{\"id\":"+id+"}||\n\n\n```\n", editor.getCursor());
 				editor.setCursor(editor.getCursor().line+3);
       },
     });
@@ -368,7 +368,7 @@ class MathPlusSettingTab extends PluginSettingTab {
 		containerEl.createEl('h3', {text: 'Live Preview'});
 
 		new Setting(containerEl)
-		.setName('Live Preview')
+		.setName('Live Preview (Beta)')
 		.addToggle(toggle => toggle
 		.setValue(this.plugin.settings.livePreview)
 		.onChange(async (value) => {
