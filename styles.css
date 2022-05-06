@@ -5,7 +5,7 @@
 
 
 
-.block-language-math mjx-container.MathJax {
+.block-language-math mjx-container.MathJax, .livePrevPlus mjx-container.MathJax {
     text-align: left !important;
 }
 
@@ -383,6 +383,26 @@
 
 .small-math-block .math-color-box.minimized {
   bottom: -40px;
+}
+
+/* Live Preview */
+.livePrevPlusBox {
+  /* border: 2px solid aqua !important; */
+  /* background-color: #ccc; */
+  border-color: var( --icon-fill-color) !important;
+}
+
+.livePrevPlusBox:active {
+  pointer-events: none !important;
+}
+
+.livePrevPlusBox .edit-block-button {
+  display: none !important;
+}
+
+.livePrevPlusBox .livePrevPlus.livePrevPlus mjx-container {
+  margin-top: 0;
+  margin-left: 2px;
 }
 
 /* Vars */

@@ -1,15 +1,18 @@
 import { App, Editor, Notice, Plugin, PluginSettingTab, Setting, renderMath, finishRenderMath, loadMathJax } from 'obsidian';
 import { formatEquation } from "./parser";
 import { renderCanvas } from "./excalidrawRenderer"
+import $ from "jquery";
 
 interface MathPlusSettings {
 	// Colors
-	color1:string,
-	color2:string,
-	color3:string,
-	colorPicker:boolean,
+	color1:string;
+	color2:string;
+	color3:string;
+	colorPicker:boolean;
 	// Math Block Size
-	minHeight:string,
+	minHeight:string;
+	// Live Preview
+	livePreview:boolean;
 	// Excalidraw UI
 	selectVisable: boolean;
 	rectVisable: boolean;
@@ -31,6 +34,8 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	colorPicker:false,
 	// Math Block Size
 	minHeight:"100",
+	// Live Preview
+	livePreview:true,
 	// Excalidraw UI
 	selectVisable: true,
 	rectVisable: false,
@@ -44,12 +49,86 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	gridModeEndabled: false
 }
 
+const createViewer = () => {
+	if($(".HyperMD-codeblock-begin").text()==="```math") {
+		updateLatexViewer();
+	}
+}
+
+const removeViewer = function() {
+	if($(this).children().first().hasClass("block-language-math") && $(".HyperMD-codeblock-begin").length<1){
+		$(".livePrevPlus").parents(".cm-html-embed").prev().remove();
+		$(".livePrevPlus").parents(".cm-html-embed").remove();
+	}
+}
+
+let filterTimeout: any;
+
+const updateLatexViewer = async()=>{
+	clearTimeout(filterTimeout);
+
+	filterTimeout = setTimeout(async() => {
+		let fullText = "";
+		let lines = $(".HyperMD-codeblock").not(".HyperMD-codeblock-begin").not(".HyperMD-codeblock-end");
+		lines.each(function() {
+			fullText+="\n"+($(this).text()||"\n");
+		});
+		let rawEqu = fullText.replace(/\|\|.+\|\|\n+/gm,"");
+		let equ = formatEquation(rawEqu);
+
+		let mdBlockEnd = document.querySelector(".HyperMD-codeblock-end");
+		let livePrevPlus = $(".livePrevPlus");
+		let previewHTML = "\n<div tabindex='-1'contenteditable='false' class='livePrevPlus'></div>";
+		livePrevPlus.length>0?livePrevPlus.parents(".cm-html-embed").prev().remove():null;
+		livePrevPlus.length>0?livePrevPlus.parents(".cm-html-embed").remove():null;
+		mdBlockEnd.insertAdjacentText("afterend", previewHTML);
+		setTimeout(async() => {
+			$(".livePrevPlus").parents(".cm-html-embed").addClass("livePrevPlusBox");
+			let prevBox = document.querySelector(".livePrevPlusBox")  as HTMLElement;
+			// prevBox.style.cursor = "default";
+		}, 150);
+		setTimeout(async() => {
+			if($(".livePrevPlus")){
+				$(".livePrevPlus").empty();
+				$(".livePrevPlus").append(renderMath(equ, true));
+				await finishRenderMath();
+			}
+		}, 150);
+
+	}, 10);
+}
+
 export default class MathPlus extends Plugin {
 	settings: MathPlusSettings;
 
 	async onload() {
 		await this.loadSettings();
 		await loadMathJax();
+		const livePreviewEnabled = this.settings.livePreview;
+
+		$(function() {
+			if(livePreviewEnabled){
+				$("body").on('DOMSubtreeModified', ".HyperMD-codeblock", createViewer);
+		
+				$("body").on('DOMNodeInserted', ".cm-preview-code-block.cm-embed-block.markdown-rendered", removeViewer);
+			}
+			// $("body").on('DOMNodeInserted', ".HyperMD-codeblock", function() {
+			// 	if($(".HyperMD-codeblock-begin").text()==="```math") {
+			// 		let livePrevPlus = $(".livePrevPlus");
+			// 		if($(".HyperMD-codeblock-begin").length<1 && livePrevPlus.length>0) {
+			// 			livePrevPlus.parents(".cm-html-embed").remove()
+			// 		}
+			// 		updateLatexViewer();
+			// 	}
+			// });
+			// $("body").on('DOMSubtreeModified', function() {
+			// 	let livePrevPlus = $(".livePrevPlus");
+			// 	if($(".HyperMD-codeblock-begin").length<1 && livePrevPlus.length>0) {
+			// 		livePrevPlus.parents(".cm-html-embed").prev().remove();
+			// 		livePrevPlus.parents(".cm-html-embed").remove();
+			// 	}
+			// });
+		});
 
 		this.registerMarkdownCodeBlockProcessor("math", async (source, el, ctx) => {
 			const parser = new DOMParser();
@@ -200,7 +279,9 @@ export default class MathPlus extends Plugin {
 	}
 
 	onunload() {
+		$("body").off('DOMSubtreeModified', ".HyperMD-codeblock", createViewer);
 
+		$("body").off('DOMNodeInserted', ".cm-preview-code-block.cm-embed-block.markdown-rendered", removeViewer);
 	}
 
 	async loadSettings() {
@@ -280,6 +361,18 @@ class MathPlusSettingTab extends PluginSettingTab {
 		.setValue(this.plugin.settings.minHeight)
 		.onChange(async (value) => {
 			this.plugin.settings.minHeight = value;
+			await this.plugin.saveSettings();
+		}));
+
+		// Live Preview
+		containerEl.createEl('h3', {text: 'Live Preview'});
+
+		new Setting(containerEl)
+		.setName('Live Preview')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.livePreview)
+		.onChange(async (value) => {
+			this.plugin.settings.livePreview = value;
 			await this.plugin.saveSettings();
 		}));
 

@@ -12,6 +12,8 @@ const closeGroup = (str: string, d=1) => {
       return i
     }
   }
+  // Returns -1 if it reaches end of string w/o closing
+  return -1
 }
 
 const formatOperator = (str: string, op: string, strFormat: Function) => {
@@ -20,9 +22,15 @@ const formatOperator = (str: string, op: string, strFormat: Function) => {
   let id = 0;
   if ((substituteString.split(op).length-1)>0){
     while (true) {
+      // the ID of the subsititute string
       id += 1;
+      // the index of the operator
       const i = substituteString.indexOf(op);
-      if(i>0 && i<substituteString.length && ((substituteString.split(op).length-1)>0)) {
+      if((i>0 && i<substituteString.length && ((substituteString.split(op).length-1)>0))) {
+        if(id>100000){
+          console.log("Too many operators/Bad while loop");
+          break
+        }
         let range1 = [i-1,i];
         let range2 = [i+op.length,i+1+op.length];
         if(substituteString.charAt(i-1) === "}") {
@@ -33,11 +41,11 @@ const formatOperator = (str: string, op: string, strFormat: Function) => {
           range2 = [i+op.length, i+1+op.length+closeGroup(substituteString.slice(i+op.length))];
         }
         let substitute = {
-          id: `{%33o${id}%33c}`,
+          keyString: `{%33o${id}%33c}`,
           formattedStr: strFormat(formatOperator(substituteString.slice(range1[0],range1[1]),op,strFormat),formatOperator(substituteString.slice(range2[0],range2[1]),op,strFormat))
         };
         substitutes.push(substitute);
-        substituteString = substituteString.replace(substituteString.slice(range1[0],range2[1]),substitute.id);
+        substituteString = substituteString.replace(substituteString.slice(range1[0],range2[1]),substitute.keyString);
 
       }else{
         break
@@ -47,7 +55,7 @@ const formatOperator = (str: string, op: string, strFormat: Function) => {
       if((substituteString.split("%33o").length-1)>0){
         for (let i = 0; i < substitutes.length; i++) {
           const substitute = substitutes[i];
-          substituteString = substituteString.replace(substitute.id,substitute.formattedStr);
+          substituteString = substituteString.replace(substitute.keyString,substitute.formattedStr);
         }
       }else{
         break

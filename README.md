@@ -30,6 +30,12 @@ This allows you to change the size of the math blocks.
 
 ![math block size settings](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/master/assets/math-block-size-settings.png)
 
+**Live Preview Settings**
+
+This allows you to toggle live preview on and off.
+
+![live preview settings](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/master/assets/live-preview-settings.png)
+
 **Excalidraw UI**
 
 Excalidraw has a lot of drawing tools which you can toggle on or off here based on your needs.
