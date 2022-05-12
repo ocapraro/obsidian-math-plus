@@ -100,7 +100,7 @@
 
 /* Canvas */
 
-.excalidraw-canvas {
+.excalidraw-canvas-wrapper .excalidraw-canvas {
   font-family: sans-serif;
   text-align: center;
   height: 100%;
@@ -122,11 +122,11 @@
   padding: 5px;
 }
 
-.excalidraw .App-menu_top .buttonList {
+.excalidraw-canvas-wrapper .excalidraw .App-menu_top .buttonList {
   display: flex;
 }
 
-.excalidraw-wrapper {
+.excalidraw-canvas-wrapper .excalidraw-wrapper {
   height: 100%;
   /* // margin: 50px; */
   padding: 0;
@@ -134,18 +134,19 @@
   opacity: 1 !important;
 }
 
-.excalidraw {
+.excalidraw-canvas-wrapper .excalidraw {
   background: #fff0 !important;
 }
 
 :root[dir="ltr"]
+  .excalidraw-canvas-wrapper 
   .excalidraw
   .layer-ui__wrapper
   .zen-mode-transition.App-menu_bottom--transition-left {
   transform: none;
 }
 
-.excalidraw .panelColumn {
+.excalidraw-canvas-wrapper .excalidraw .panelColumn {
   text-align: left;
 }
 
@@ -160,23 +161,23 @@
 }
 
 /* Hide UI */
-.App-menu_top.App-menu_top.App-menu_top > * {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > * {
   display: none;
 }
 
-.App-menu_top.App-menu_top.App-menu_top > section {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > section {
   display: block;
 }
 
-.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical {
   display: block;
 }
 
-.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section {
   display: none;
 }
 
-.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) {
   display: block;
   position: absolute;
   bottom: 0;
@@ -187,33 +188,33 @@
   display: none;
 }
 
-.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) input {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) input {
   height: 30px;
   caret-color: var(--caret-color);
 }
 
-.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) .popover {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:not(:first-of-type) .popover {
   display: none;
 }
 
-.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:last-of-type .panelColumn > * {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:last-of-type .panelColumn > * {
   display: none;
 }
 
-.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:last-of-type .panelColumn > div:first-of-type {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:last-of-type .panelColumn > div:first-of-type {
   display: block;
 }
 
-.App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:last-of-type .panelColumn > h3:first-of-type {
+.excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section:last-of-type .panelColumn > h3:first-of-type {
   display: block;
 }
 
-.App-bottom-bar.App-bottom-bar.App-bottom-bar, .HintViewer.HintViewer.HintViewer, .App-menu_bottom.App-menu_bottom.App-menu_bottom {
+.excalidraw-canvas-wrapper .App-bottom-bar.App-bottom-bar.App-bottom-bar, .excalidraw-canvas-wrapper .HintViewer.HintViewer.HintViewer, .excalidraw-canvas-wrapper .App-menu_bottom.App-menu_bottom.App-menu_bottom {
     display: none ;
 }
 
 /* Hide Buttons */
-.App-toolbar label[title="Insert image — 9"] {
+.excalidraw-canvas-wrapper .App-toolbar label[title="Insert image — 9"] {
   display: none;
 }
 .no-diamond .App-toolbar label[title="Diamond — D or 3"] {
@@ -247,10 +248,10 @@
 }
 
 /* Style UI */
-.App-toolbar-container.App-toolbar-container.App-toolbar-container > * {
+.excalidraw-canvas-wrapper .App-toolbar-container.App-toolbar-container.App-toolbar-container > * {
     display: none;
 }
-.App-toolbar-container .Island.App-toolbar {
+.excalidraw-canvas-wrapper .App-toolbar-container .Island.App-toolbar {
     display: block;
     background: transparent;
     padding: 0;
@@ -263,7 +264,7 @@
     opacity: 1 !important;
 }
 
-.App-toolbar .Stack.Stack_horizontal {
+.excalidraw-canvas-wrapper .App-toolbar .Stack.Stack_horizontal {
     display: flex;
     flex-direction: column;
     border: 2px solid var(--background-modifier-border);
@@ -279,24 +280,24 @@
     /* transform: translateY(-50%); */
 }
 
-.FixedSideContainer.FixedSideContainer_side_top {
+.excalidraw-canvas-wrapper .FixedSideContainer.FixedSideContainer_side_top {
     height: 100%;
 }
 
-.FixedSideContainer.FixedSideContainer_side_top.App-top-bar section, .App-menu_top.App-menu_top.App-menu_top > section {
+.excalidraw-canvas-wrapper .FixedSideContainer.FixedSideContainer_side_top.App-top-bar section, .excalidraw-canvas-wrapper .App-menu_top.App-menu_top.App-menu_top > section {
     position: absolute;
     top: calc(50% - 20px);
     transform: translateY(-50%);
     z-index: 1;
 }
 
-.excalidraw section {
+.excalidraw-canvas-wrapper .excalidraw section {
     position: absolute;
     right: 0;
     background-color: var(--background-primary);
 }
 
-.excalidraw * {
+.excalidraw-canvas-wrapper .excalidraw * {
   caret-color: #000;
 }
 
@@ -352,7 +353,7 @@
 }
 
 /* Small UI */
-.small-canvas section{
+.excalidraw-canvas-wrapper .small-canvas section{
     max-width: 60px;
     transition: max-width 300ms;
     top: unset !important;
@@ -360,15 +361,15 @@
     margin-bottom: -25px;
 }
 
-.small-canvas section:hover {
+.excalidraw-canvas-wrapper .small-canvas section:hover {
     max-width: 250px;
 }
 
-.small-canvas section .Stack_horizontal .Stack_horizontal {
+.excalidraw-canvas-wrapper .small-canvas section .Stack_horizontal .Stack_horizontal {
   flex-direction: row;
 }
 
-.small-canvas .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section {
+.excalidraw-canvas-wrapper .small-canvas .App-menu_top.App-menu_top.App-menu_top > .Stack.Stack_vertical section {
   display: none;
 }
 
@@ -406,7 +407,7 @@
 }
 
 /* Vars */
-.excalidraw {
+.excalidraw-canvas-wrapper .excalidraw {
   --color-primary: var(--interactive-accent) !important;
   --color-primary-darker: #f783ac;
   --color-primary-darkest: #e64980;
@@ -415,7 +416,7 @@
   --theme-filter: none;
 }
 
-.excalidraw.theme--dark{
+.excalidraw-canvas-wrapper .excalidraw.theme--dark{
   --theme-filter:unset;
   --icon-fill-color: unset;
 }
