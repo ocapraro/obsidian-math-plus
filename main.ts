@@ -105,6 +105,8 @@ export default class MathPlus extends Plugin {
 		await this.loadSettings();
 		await loadMathJax();
 		const livePreviewEnabled = this.settings.livePreview;
+		$("<style>").text(`.min-height-true { min-height:${this.settings.minHeight}px}`).appendTo("head");
+
 
 		$(function() {
 			if(livePreviewEnabled){
@@ -200,7 +202,7 @@ export default class MathPlus extends Plugin {
 			this.settings.textVisable?null:el.addClass("no-text");
 
 			// Set Math Block Minimum Height
-			el.addClass(`min-height-${this.settings.minHeight}`);
+			el.addClass(`min-height-true`);
 
 
 			// Add button group
@@ -352,12 +354,21 @@ class MathPlusSettingTab extends PluginSettingTab {
 		// Math Block Size
 		containerEl.createEl('h3', {text: 'Math Block Size'});
 
+		// new Setting(containerEl)
+		// .setName('Minimum Block Height')
+		// .addDropdown( dropdown => dropdown
+		// .addOption("100","100")
+		// .addOption("200","200")
+		// .addOption("300","300")
+		// .setValue(this.plugin.settings.minHeight)
+		// .onChange(async (value) => {
+		// 	this.plugin.settings.minHeight = value;
+		// 	await this.plugin.saveSettings();
+		// }));
+		
 		new Setting(containerEl)
 		.setName('Minimum Block Height')
-		.addDropdown( dropdown => dropdown
-		.addOption("100","100")
-		.addOption("200","200")
-		.addOption("300","300")
+		.addText(text => text
 		.setValue(this.plugin.settings.minHeight)
 		.onChange(async (value) => {
 			this.plugin.settings.minHeight = value;

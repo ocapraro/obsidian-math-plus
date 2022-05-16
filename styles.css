@@ -11,15 +11,6 @@
 
 .block-language-math {
   position: relative;
-  min-height: 100px;
-}
-
-.block-language-math.min-height-200 {
-  min-height: 200px;
-}
-
-.block-language-math.min-height-300 {
-  min-height: 300px;
 }
 
 .math-pill {
