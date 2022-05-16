@@ -47,3 +47,5 @@ Excalidraw has a lot of drawing tools which you can toggle on or off here based 
 You can toggle grid mode on or off here.
 
 ![excalidraw settings](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/0.2.4/assets/excalidraw-settings-settings.png)
+
+[<img style="float:left" src="https://user-images.githubusercontent.com/14358394/115450238-f39e8100-a21b-11eb-89d0-fa4b82cdbce8.png" width="200">](https://ko-fi.com/ocapraro)
