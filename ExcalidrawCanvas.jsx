@@ -46,7 +46,7 @@ const exportSVG = async (data, id, saveToFile, closeDrawing=true) => {
     "type": "rectangle",
     "x": -500,
     "y": -500,
-    "width": 1000,
+    "width": 10000,
     "height": canvas?canvas.offsetHeight:1,
     "angle": 0,
     "strokeColor": "transparent",

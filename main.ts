@@ -152,7 +152,7 @@ export default class MathPlus extends Plugin {
 				if(await adapter.exists(configPath)){
 					if(closeDrawing){
 						let svgData = await adapter.read(configPath);
-						el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
+						el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper" style="width:${(el.querySelector("mjx-container mjx-math").clientWidth?el.querySelector("mjx-container mjx-math").clientWidth+"px":"100%")};">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
 						drawButton.show();
 						doneButton.hide();
 						new Notice("Saved");
@@ -185,7 +185,7 @@ export default class MathPlus extends Plugin {
 			const configPath = vault.configDir + `/plugins/obsidian-math-plus/drawings/data-${blockId}.svg`;
 			if(await adapter.exists(configPath)){
 				let svgData = await adapter.read(configPath);
-				el.append(parser.parseFromString(`<div class="math-svg-wrapper">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
+				el.append(parser.parseFromString(`<div class="math-svg-wrapper" style="width:${(el.querySelector("mjx-container mjx-math").clientWidth?el.querySelector("mjx-container mjx-math").clientWidth+"px":"100%")};">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
 			}
 
 			// add id class to block
@@ -231,6 +231,8 @@ export default class MathPlus extends Plugin {
 			drawButton.setAttr("aria-label","Draw on Block");
 			drawButton.onClickEvent(async ()=>{
 				const wrapper = el.createEl("div",{cls:"excalidraw-canvas-wrapper"});
+				el.addClass("editing");
+				el.scrollLeft=0;
 				if(el.clientHeight<=parseInt(this.settings.minHeight)){
 					el.addClass("small-math-block")
 				}
@@ -250,11 +252,12 @@ export default class MathPlus extends Plugin {
 			doneButton.setAttr("aria-label","Save Drawing");
 			doneButton.onClickEvent(async ()=>{
 				let saveButton = el.querySelector(".math-save-button") as HTMLElement;
+				el.removeClass("editing");
 				if(saveButton) {
 					saveButton.click();
 				}else{
 					let svgData = await adapter.read(configPath);
-					el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
+					el.querySelector(".excalidraw-canvas-wrapper").replaceWith(parser.parseFromString(`<div class="math-svg-wrapper" style="width:${(el.querySelector("mjx-container mjx-math").clientWidth?el.querySelector("mjx-container mjx-math").clientWidth+"px":"100%")};">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
 					drawButton.show();
 					doneButton.hide();
 					new Notice("Saved");

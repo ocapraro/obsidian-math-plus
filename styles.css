@@ -11,6 +11,21 @@
 
 .block-language-math {
   position: relative;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+/* .block-language-math::-webkit-scrollbar-track {
+  background: #202020;
+} */
+
+/* .block-language-math:hover::-webkit-scrollbar-track {
+  background: unset;
+  transition: all 300ms;
+} */
+
+.block-language-math.editing {
+  overflow-x: hidden;
 }
 
 .math-pill {
@@ -38,13 +53,14 @@
 
 .math-button-group {
     margin-right: 21px;
-    position: absolute;
+    position: fixed;
     top: 5px;
     right: 5px;
     display: flex;
     flex-direction: row-reverse;
+    z-index: 2;
     padding: 0;
-    margin-top: calc(-20px - calc(var(--font-text-size) - 16px));
+    /* margin-top: calc(-20px - calc(var(--font-text-size) - 16px)); */
 }
 
 .math-button {
@@ -60,6 +76,7 @@
     z-index: 1;
     margin-right: 10px;
     opacity: 0;
+    z-index: 1;
     transition: opacity 500ms;
 }
 
@@ -83,6 +100,7 @@
   height: calc(100% + 20px);
   margin-top: -9px;
   margin-left: -9px;
+  overflow: hidden;
 }
 
 .markdown-reading-view .math-svg-wrapper {
@@ -308,7 +326,7 @@
   position: absolute;
   gap: 10px;
   left: 50%;
-  bottom: -8px;
+  bottom: 3px;
   z-index: 2;
   transform: translateX(-50%);
   padding: 12px 20px;
@@ -321,11 +339,11 @@
 }
 
 .math-color-box.minimized:hover {
-  bottom: -50px;
+  bottom: -35px;
 }
 
 .math-color-box.minimized {
-  bottom: -56px;
+  bottom: -40px;
 }
 
 .math-color-swatch.selected {
