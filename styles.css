@@ -15,6 +15,10 @@
   overflow-x: auto;
 }
 
+.block-language-math ~ .edit-block-button {
+  z-index: 2;
+}
+
 /* .block-language-math::-webkit-scrollbar-track {
   background: #202020;
 } */
@@ -101,6 +105,7 @@
   margin-top: -9px;
   margin-left: -9px;
   overflow: hidden;
+  min-width: 100%;
 }
 
 .markdown-reading-view .math-svg-wrapper {
