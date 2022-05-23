@@ -36,6 +36,12 @@ This allows you to toggle live preview on and off.
 
 ![live preview settings](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/master/assets/live-preview-settings.png)
 
+**Metadata Settings**
+
+This allows you to toggle on and off some of the metadata stored in the code blocks.
+
+![metadata settings](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/master/assets/metadata-settings.png)
+
 **Excalidraw UI**
 
 Excalidraw has a lot of drawing tools which you can toggle on or off here based on your needs.
