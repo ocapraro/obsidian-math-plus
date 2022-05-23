@@ -13,6 +13,10 @@ interface MathPlusSettings {
 	minHeight:string;
 	// Live Preview
 	livePreview:boolean;
+	// Metadata
+	addDollars:boolean;
+	idHidden:boolean;
+	formattingHidden:boolean;
 	// Excalidraw UI
 	selectVisable: boolean;
 	rectVisable: boolean;
@@ -36,6 +40,10 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	minHeight:"100",
 	// Live Preview
 	livePreview:false,
+	// Metadata
+	addDollars:false,
+	idHidden:false,
+	formattingHidden:true,
 	// Excalidraw UI
 	selectVisable: true,
 	rectVisable: false,
@@ -53,6 +61,15 @@ const createViewer = () => {
 	if($(".HyperMD-codeblock-begin").text()==="```math") {
 		updateLatexViewer();
 	}
+}
+
+const hideMetaData = () => {
+	$(".HyperMD-codeblock:contains('%34o$$%34c')").hide();
+}
+
+const hideId = () => {
+	$(".HyperMD-codeblock:contains('||{\"id\":')").next(".HyperMD-codeblock:has(br)").hide();
+	$(".HyperMD-codeblock:contains('||{\"id\":')").hide();
 }
 
 const removeViewer = function() {
@@ -73,7 +90,7 @@ const updateLatexViewer = async()=>{
 		lines.each(function() {
 			fullText+="\n"+($(this).text()||"\n");
 		});
-		let rawEqu = fullText.replace(/\|\|.+\|\|\n+/gm,"");
+		let rawEqu = fullText.replace(/\|\|.+\|\|\n*/gm,"").replace(/%34o.+%34c\n*/gm,"");
 		let equ = formatEquation(rawEqu);
 
 		let mdBlockEnd = document.querySelector(".HyperMD-codeblock-end");
@@ -105,6 +122,8 @@ export default class MathPlus extends Plugin {
 		await this.loadSettings();
 		await loadMathJax();
 		const livePreviewEnabled = this.settings.livePreview;
+		const formattingHidden = this.settings.formattingHidden;
+		const idHidden = this.settings.idHidden;
 		$("<style>").text(`.min-height-true { min-height:${this.settings.minHeight}px}`).appendTo("head");
 
 
@@ -113,6 +132,12 @@ export default class MathPlus extends Plugin {
 				$("body").on('DOMSubtreeModified', ".HyperMD-codeblock", createViewer);
 		
 				$("body").on('DOMNodeInserted', ".cm-preview-code-block.cm-embed-block.markdown-rendered", removeViewer);
+			}
+			if(formattingHidden) {
+				$("body").on('DOMNodeInserted', ".HyperMD-codeblock", hideMetaData);
+			}
+			if(idHidden) {
+				$("body").on('DOMNodeInserted', ".HyperMD-codeblock", hideId);
 			}
 			// $("body").on('DOMNodeInserted', ".HyperMD-codeblock", function() {
 			// 	if($(".HyperMD-codeblock-begin").text()==="```math") {
@@ -169,7 +194,7 @@ export default class MathPlus extends Plugin {
 			}
 
 			// Parse Equation
-			let rawEqu = source.replace(/\|\|.+\|\|\n+/gm,"");
+			let rawEqu = source.replace(/\|\|.+\|\|\n*/gm,"").replace(/%34o.+%34c\n*/gm,"");;
 			let equ = formatEquation(rawEqu);
 
 			// Render Equation
@@ -274,8 +299,8 @@ export default class MathPlus extends Plugin {
 			hotkeys: [{ modifiers: ["Mod"], key: "m" }],
       editorCallback: (editor: Editor) => {
 				let id = Math.floor(Math.random() * Date.now());
-        editor.replaceRange("```math\n||{\"id\":"+id+"}||\n\n\n```\n", editor.getCursor());
-				editor.setCursor(editor.getCursor().line+3);
+        editor.replaceRange("```math\n"+(this.settings.addDollars?"%34o$$%34c\n":"")+"||{\"id\":"+id+"}||\n\n\n"+(this.settings.addDollars?"%34o$$%34c\n":"")+"```\n", editor.getCursor());
+				editor.setCursor(editor.getCursor().line+3+(this.settings.addDollars?1:0));
       },
     });
 
@@ -287,6 +312,10 @@ export default class MathPlus extends Plugin {
 		$("body").off('DOMSubtreeModified', ".HyperMD-codeblock", createViewer);
 
 		$("body").off('DOMNodeInserted', ".cm-preview-code-block.cm-embed-block.markdown-rendered", removeViewer);
+
+		$("body").off('DOMNodeInserted', ".HyperMD-codeblock", hideMetaData);
+
+		$("body").off('DOMNodeInserted', ".HyperMD-codeblock", hideId);
 	}
 
 	async loadSettings() {
@@ -356,18 +385,6 @@ class MathPlusSettingTab extends PluginSettingTab {
 
 		// Math Block Size
 		containerEl.createEl('h3', {text: 'Math Block Size'});
-
-		// new Setting(containerEl)
-		// .setName('Minimum Block Height')
-		// .addDropdown( dropdown => dropdown
-		// .addOption("100","100")
-		// .addOption("200","200")
-		// .addOption("300","300")
-		// .setValue(this.plugin.settings.minHeight)
-		// .onChange(async (value) => {
-		// 	this.plugin.settings.minHeight = value;
-		// 	await this.plugin.saveSettings();
-		// }));
 		
 		new Setting(containerEl)
 		.setName('Minimum Block Height')
@@ -390,6 +407,37 @@ class MathPlusSettingTab extends PluginSettingTab {
 			await this.plugin.saveSettings();
 		}));
 
+		// Metadata
+		containerEl.createEl('h3', {text: 'Metadata'});
+
+		new Setting(containerEl)
+		.setName('Add Dollar Signs')
+		.setDesc("Wraps the code blocks in $$ for cross plugin support with plugins like ")
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.addDollars)
+		.onChange(async (value) => {
+			this.plugin.settings.addDollars = value;
+			await this.plugin.saveSettings();
+		})).descEl.createEl('a', {text: 'Completr',href:"https://obsidian.md/plugins?id=obsidian-completr"});
+
+		new Setting(containerEl)
+		.setName('Hide ID')
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.idHidden)
+		.onChange(async (value) => {
+			this.plugin.settings.idHidden = value;
+			await this.plugin.saveSettings();
+		}));
+
+		new Setting(containerEl)
+		.setName('Hide Formatting')
+		.setDesc("Hides formatting within math blocks")
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.formattingHidden)
+		.onChange(async (value) => {
+			this.plugin.settings.formattingHidden = value;
+			await this.plugin.saveSettings();
+		}));
 
 		// Excalidraw UI
 		containerEl.createEl('h3', {text: 'Excalidraw UI'});

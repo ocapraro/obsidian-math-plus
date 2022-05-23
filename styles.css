@@ -400,6 +400,10 @@
   bottom: -40px;
 }
 
+.cm-gutterElement {
+  overflow: hidden;
+}
+
 /* Live Preview */
 .livePrevPlusBox {
   /* border: 2px solid aqua !important; */
