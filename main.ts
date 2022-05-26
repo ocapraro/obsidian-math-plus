@@ -125,9 +125,62 @@ export default class MathPlus extends Plugin {
 		const formattingHidden = this.settings.formattingHidden;
 		const idHidden = this.settings.idHidden;
 		$("<style>").text(`.min-height-true { min-height:${this.settings.minHeight}px}`).appendTo("head");
+			
+
+			const saveToFile = async (fileName:string, data:string, directory:string, closeDrawing=true) => {
+				const vault = this.app.vault;
+				const adapter = vault.adapter;
+				let directoryPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}`;
+				// If the directory isn't there, make it
+				if(!await adapter.exists(directoryPath)){
+					await adapter.mkdir(directoryPath);
+				}
+				const configPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}/${fileName}`;
+				if(await adapter.exists(configPath)){
+					await adapter.write(configPath,data);
+				}else{
+					await vault.create(configPath,data);
+				}
+			}
+
+		const readFile = async (fileName:string, directory:string) => {
+			const configPath = this.app.vault.configDir + `/plugins/obsidian-math-plus/${directory}/${fileName}`;
+			if(await this.app.vault.adapter.exists(configPath)){
+				return await this.app.vault.adapter.read(configPath);
+			}
+			return null
+		}
+
+		const objToCss = (obj:any) =>{
+			return Object.entries(obj).map(([k, v]) => `${k} {${Object.entries(v).map(([k, v]) =>`${k}:${v}`).join(';')}}`).join('')
+		}
+
+		// Load Block Styles
+		let blockStylesRaw = await readFile("block-styles","block-data")||"{}";
+		let blockStyles = JSON.parse(blockStylesRaw);
+		$("<style id='block-styles'>").text(objToCss(blockStyles)).appendTo("head");
+
+		const updateBlockStyle = (id:string,key:string,value:string)=>{
+			if(blockStyles.hasOwnProperty(`.math-block-${id}`)){
+				if(blockStyles[`.math-block-${id}`][key]!==value){
+					blockStyles[`.math-block-${id}`][key] = value;
+					saveToFile("block-styles",JSON.stringify(blockStyles),"block-data");
+					$("#block-styles").remove();
+					$("<style id='block-styles'>").text(objToCss(blockStyles)).appendTo("head");
+				}
+			}else{
+				blockStyles[`.math-block-${id}`] = {
+					[key]:value,
+				}
+				saveToFile("block-styles",JSON.stringify(blockStyles),"block-data");
+				$("#block-styles").remove();
+				$("<style id='block-styles'>").text(objToCss(blockStyles)).appendTo("head");
+			}
+		}
 
 
 		$(function() {
+			let lastHeight = 0;
 			if(livePreviewEnabled){
 				$("body").on('DOMSubtreeModified', ".HyperMD-codeblock", createViewer);
 		
@@ -139,6 +192,21 @@ export default class MathPlus extends Plugin {
 			if(idHidden) {
 				$("body").on('DOMNodeInserted', ".HyperMD-codeblock", hideId);
 			}
+
+			$("body").on("mousedown", ".block-language-math", function(){
+				lastHeight=$(this).height();
+			});
+
+			$("body").on("mouseup", ".block-language-math", function(){
+				// if($(this).height()<=parseFloat($(this).css("min-height"))){
+				// 	$(this).css("min-height",0);
+				// }
+				if(lastHeight!==$(this).height()){
+					const id=$(this).attr('class').match(/math-block-[0-9]+/gm)[0].replace(/math-block-/gm,"");
+					updateBlockStyle(id,"height",`${$(this).height()}px`);
+					$(this).addClass("user-sized");
+				}
+			});
 			// $("body").on('DOMNodeInserted', ".HyperMD-codeblock", function() {
 			// 	if($(".HyperMD-codeblock-begin").text()==="```math") {
 			// 		let livePrevPlus = $(".livePrevPlus");
@@ -216,6 +284,13 @@ export default class MathPlus extends Plugin {
 			// add id class to block
 			el.addClass("math-block-"+blockId);
 
+			// hide snap button if fit content
+			if(blockStyles.hasOwnProperty(`.math-block-${blockId}`)){
+				if(blockStyles[`.math-block-${blockId}`]["height"]!=="fit-content"){
+					el.addClass("user-sized");
+				}
+			}
+
 			// Hide Buttons
 			this.settings.selectVisable?null:el.addClass("no-select");
 			this.settings.rectVisable?null:el.addClass("no-rect");
@@ -250,6 +325,18 @@ export default class MathPlus extends Plugin {
 			// Add Done Button
 			const doneIcon = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M438.6 105.4C451.1 117.9 451.1 138.1 438.6 150.6L182.6 406.6C170.1 419.1 149.9 419.1 137.4 406.6L9.372 278.6C-3.124 266.1-3.124 245.9 9.372 233.4C21.87 220.9 42.13 220.9 54.63 233.4L159.1 338.7L393.4 105.4C405.9 92.88 426.1 92.88 438.6 105.4H438.6z"/></svg>`,"text/html")
 			const doneButton = editButtonGroup.createEl("div",{ cls: "math-button"});
+
+			// Add Snap Button
+			const resizeIcon = parser.parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M128 320H32c-17.69 0-32 14.31-32 32s14.31 32 32 32h64v64c0 17.69 14.31 32 32 32s32-14.31 32-32v-96C160 334.3 145.7 320 128 320zM416 320h-96c-17.69 0-32 14.31-32 32v96c0 17.69 14.31 32 32 32s32-14.31 32-32v-64h64c17.69 0 32-14.31 32-32S433.7 320 416 320zM320 192h96c17.69 0 32-14.31 32-32s-14.31-32-32-32h-64V64c0-17.69-14.31-32-32-32s-32 14.31-32 32v96C288 177.7 302.3 192 320 192zM128 32C110.3 32 96 46.31 96 64v64H32C14.31 128 0 142.3 0 160s14.31 32 32 32h96c17.69 0 32-14.31 32-32V64C160 46.31 145.7 32 128 32z"/></svg>`, 'text/html');
+			const resizeButton = editButtonGroup.createEl("div",{ cls: "math-button snap-button"});
+			resizeButton.append(resizeIcon.body.querySelector("svg"));
+			resizeButton.setAttr("aria-label","Snap to LaTex");
+			resizeButton.onClickEvent(()=>{
+				// el.style.minHeight=null;
+				el.style.height="fit-content";
+				el.removeClass("user-sized");
+				updateBlockStyle(`${blockId}`,"height",`fit-content`)
+			});
 
 			// Add Draw Button Onclick
 			drawButton.append(drawIcon.body.querySelector("svg"));
@@ -316,6 +403,8 @@ export default class MathPlus extends Plugin {
 		$("body").off('DOMNodeInserted', ".HyperMD-codeblock", hideMetaData);
 
 		$("body").off('DOMNodeInserted', ".HyperMD-codeblock", hideId);
+
+		$("body").off("mouseup", ".block-language-math");
 	}
 
 	async loadSettings() {

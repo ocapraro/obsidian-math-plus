@@ -26,5 +26,6 @@ excalidraw-assets
 excalidraw-assets-dev
 excalidraw-files
 
-# Exclude drawings
-drawings/*.svg
+# Exclude my files
+drawings
+block-data
