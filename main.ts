@@ -64,12 +64,12 @@ const createViewer = () => {
 }
 
 const hideMetaData = () => {
-	$(".HyperMD-codeblock:contains('%34o$$%34c')").hide();
+	$(".HyperMD-codeblock:contains('%34o$$%34c')").css({display:"none"});
 }
 
 const hideId = () => {
 	$(".HyperMD-codeblock:contains('||{\"id\":')").next(".HyperMD-codeblock:has(br)").hide();
-	$(".HyperMD-codeblock:contains('||{\"id\":')").hide();
+	$(".HyperMD-codeblock:contains('||{\"id\":')").css({display:"none"});
 }
 
 const removeViewer = function() {
