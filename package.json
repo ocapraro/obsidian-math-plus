@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-math-plus",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "This is a math plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"scripts": {
