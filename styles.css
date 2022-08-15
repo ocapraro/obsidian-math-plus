@@ -20,6 +20,8 @@
   min-height: 0;
 } */
 
+/* Math Block Webkit Resizer */
+
 .cm-preview-code-block:hover .block-language-math::after {
   opacity: 1;
 }
