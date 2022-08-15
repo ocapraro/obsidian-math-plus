@@ -35,54 +35,52 @@ interface MathPlusSettings {
 const DEFAULT_SETTINGS: MathPlusSettings = {
 	// Operators
 	operators: `[
-		{
-			"op":"%bs%if",
-			"format":"%s1%{%bs%text{if }}%s2%"
-		},
-		{
-			"op":"%bs%then",
-			"format":"%s1%{%bs%text{then }}%s2%"
-		},
-		{
-			"op":"%bs%or",
-			"format":"%s1%{%bs%text{ or }}%s2%"
-		},
-		{
-			"op":"^",
-			"format":"{{%s1%}^{%s2%}}"
-		}
-		]`,
-		
-		// ,
-		// {
-		// 	op:"_",
-		// 	format:(s1: string,s2: string)=>{return `{{${s1}}_{${s2}}}`}
-		// },
-		// {
-		// 	op:"!",
-		// 	format:(s1: string,s2: string)=>{return `{${s1}!}${s2}`}
-		// },
-		// {
-		// 	op:"/",
-		// 	format:(s1: string,s2: string)=>{return `\\frac{${s1}}{${s2}}`}
-		// },
-		// {
-		// 	op:"\\lim",
-		// 	format:(s1: string,s2: string)=>{return `\\lim_{${s1}\\to${s2}}`}
-		// },
-		// {
-		// 	op:"\\su",
-		// 	format:(s1: string,s2: string)=>{return `\\sum\\limits_{${s2}}^{${s1}}`}
-		// },
-		// {
-		// 	"op":"%bs%is",
-		// 	"format":"%s1%%bs%sum%bs%limits_{n=%s2%}^{%bs%infty}"
-		// },
-		// {
-		// 	op:"\\abs",
-		// 	format:(s1: string,s2: string)=>{return `${s1}{|${s2}|}`}
-		// }
-	// ];`,
+			{
+					"op":"\\if",
+					"format":"{\\text{if }}"
+			},
+			{
+					"op":"\\then",
+					"format":"{\\text{then }}"
+			},
+			{
+					"op":"\\or",
+					"format":"{\\text{ or }}"
+			},
+			{
+					"op":"^",
+					"format":"{{%s1%}^{%s2%}}"
+			},
+			{
+					"op":"_",
+					"format":"{{%s1%}_{%s2%}}"
+			},
+			{
+					"op":"!",
+					"format":"{%s1%!}"
+			},
+			{
+					"op":"/",
+					"format":"\\frac{%s1%}{%s2%}"
+			},
+			{
+					"op":"\\lim",
+					"format":"\\lim_{%s1%\\to%s2%}"
+			},
+			{
+					"op":"\\abs",
+					"format":"{|%s2%|}"
+			},
+			{
+					"op":"\\su",
+					"format":"\\sum\\limits_{%s2%}^{%s1%}"
+			},
+			{
+					"op":"\\is",
+					"format":"\\sum\\limits_{n=%s2%}^{\\infty}"
+			}
+	]`,
+
 	// Colors
 	color1:"#000000",
 	color2:"#1864ab",
