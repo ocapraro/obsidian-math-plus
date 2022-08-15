@@ -21,8 +21,17 @@ const replaceAll= (str: string, find: string, replace: string) => {
 }
 
 const formatStrFormat = (format: string, s1:string, s2:string) => {
-  let str = format.replace("%s1%",s1);
-  str = str.replace("%s2%",s2)
+  let str = format;
+  if (str.includes("%s1%")) {
+    str = str.replace("%s1%",s1);
+  }else{
+    str = s1+str;
+  }
+  if (str.includes("%s2%")) {
+    str = str.replace("%s2%",s2);
+  }else{
+    str = str+s2;
+  }
   str = replaceAll(str, "%bs%","\\")
   return str
 }
