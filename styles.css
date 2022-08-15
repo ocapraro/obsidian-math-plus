@@ -94,6 +94,17 @@
 
 /* ----------------------------------------- */
 
+.big-text-area {
+  align-items: flex-start;
+}
+
+.big-text-area textarea {
+  overflow-wrap: normal;
+  height: 300px;
+  width: 500px;
+  white-space: pre;
+}
+
 .math-pill {
   height: 3.5px;
   width: 50%;

@@ -16,10 +16,22 @@ const closeGroup = (str: string, d=1) => {
   return -1
 }
 
-const formatOperator = (str: string, op: string, strFormat: Function) => {
+const replaceAll= (str: string, find: string, replace: string) => {
+	return str.replace(new RegExp(find, 'g'), replace);
+}
+
+const formatStrFormat = (format: string, s1:string, s2:string) => {
+  let str = format.replace("%s1%",s1);
+  str = str.replace("%s2%",s2)
+  str = replaceAll(str, "%bs%","\\")
+  return str
+}
+
+const formatOperator = (str: string, dirtyOp: string, strFormat: string) => {
   let substituteString = str;
   let substitutes = [];
   let id = 0;
+  let op = replaceAll(dirtyOp, "%bs%","\\");
   if ((substituteString.split(op).length-1)>0){
     while (true) {
       // the ID of the subsititute string
@@ -42,7 +54,7 @@ const formatOperator = (str: string, op: string, strFormat: Function) => {
         }
         let substitute = {
           keyString: `{%33o${id}%33c}`,
-          formattedStr: strFormat(formatOperator(substituteString.slice(range1[0],range1[1]),op,strFormat),formatOperator(substituteString.slice(range2[0],range2[1]),op,strFormat))
+          formattedStr: formatStrFormat(strFormat,formatOperator(substituteString.slice(range1[0],range1[1]),op,strFormat),formatOperator(substituteString.slice(range2[0],range2[1]),op,strFormat))
         };
         substitutes.push(substitute);
         substituteString = substituteString.replace(substituteString.slice(range1[0],range2[1]),substitute.keyString);
@@ -82,53 +94,8 @@ const addLines = (str: string) => {
   return formattedString
 }
 
-export const formatEquation = (str: string) => {
-  const operators = [
-    {
-      op:"\\if",
-      format:(s1: string,s2: string)=>{return `${s1}{\\text{if }}${s2}`}
-    },
-    {
-      op:"\\then",
-      format:(s1: string,s2: string)=>{return `${s1}{\\text{then }}${s2}`}
-    },
-    {
-      op:"\\or",
-      format:(s1: string,s2: string)=>{return `${s1}{\\text{ or }}${s2}`}
-    },
-    {
-      op:"^",
-      format:(s1: string,s2: string)=>{return `{{${s1}}\^{${s2}}}`}
-    },
-    {
-      op:"_",
-      format:(s1: string,s2: string)=>{return `{{${s1}}_{${s2}}}`}
-    },
-    {
-      op:"!",
-      format:(s1: string,s2: string)=>{return `{${s1}!}${s2}`}
-    },
-    {
-      op:"/",
-      format:(s1: string,s2: string)=>{return `\\frac{${s1}}{${s2}}`}
-    },
-    {
-      op:"\\lim",
-      format:(s1: string,s2: string)=>{return `\\lim_{${s1}\\to${s2}}`}
-    },
-    {
-      op:"\\su",
-      format:(s1: string,s2: string)=>{return `\\sum\\limits_{${s2}}^{${s1}}`}
-    },
-    {
-      op:"\\is",
-      format:(s1: string,s2: string)=>{return `${s1}\\sum\\limits_{n=${s2}}^{\\infty}`}
-    },
-    {
-      op:"\\abs",
-      format:(s1: string,s2: string)=>{return `${s1}{|${s2}|}`}
-    }
-  ];
+export const formatEquation = (str: string, strOperators: string) => {
+  const operators = JSON.parse(replaceAll(strOperators,"\\\\","%bs%"));
   let formattedString = " "+formatGroups(str);
   for (let i = 0; i < operators.length; i++) {
     const op = operators[i];

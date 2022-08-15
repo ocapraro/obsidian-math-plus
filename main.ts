@@ -4,6 +4,8 @@ import { renderCanvas } from "./excalidrawRenderer"
 import $ from "jquery";
 
 interface MathPlusSettings {
+	// Operators
+	operators:string;
 	// Colors
 	color1:string;
 	color2:string;
@@ -31,6 +33,56 @@ interface MathPlusSettings {
 }
 
 const DEFAULT_SETTINGS: MathPlusSettings = {
+	// Operators
+	operators: `[
+		{
+			"op":"%bs%if",
+			"format":"%s1%{%bs%text{if }}%s2%"
+		},
+		{
+			"op":"%bs%then",
+			"format":"%s1%{%bs%text{then }}%s2%"
+		},
+		{
+			"op":"%bs%or",
+			"format":"%s1%{%bs%text{ or }}%s2%"
+		},
+		{
+			"op":"^",
+			"format":"{{%s1%}^{%s2%}}"
+		}
+		]`,
+		
+		// ,
+		// {
+		// 	op:"_",
+		// 	format:(s1: string,s2: string)=>{return `{{${s1}}_{${s2}}}`}
+		// },
+		// {
+		// 	op:"!",
+		// 	format:(s1: string,s2: string)=>{return `{${s1}!}${s2}`}
+		// },
+		// {
+		// 	op:"/",
+		// 	format:(s1: string,s2: string)=>{return `\\frac{${s1}}{${s2}}`}
+		// },
+		// {
+		// 	op:"\\lim",
+		// 	format:(s1: string,s2: string)=>{return `\\lim_{${s1}\\to${s2}}`}
+		// },
+		// {
+		// 	op:"\\su",
+		// 	format:(s1: string,s2: string)=>{return `\\sum\\limits_{${s2}}^{${s1}}`}
+		// },
+		// {
+		// 	"op":"%bs%is",
+		// 	"format":"%s1%%bs%sum%bs%limits_{n=%s2%}^{%bs%infty}"
+		// },
+		// {
+		// 	op:"\\abs",
+		// 	format:(s1: string,s2: string)=>{return `${s1}{|${s2}|}`}
+		// }
+	// ];`,
 	// Colors
 	color1:"#000000",
 	color2:"#1864ab",
@@ -57,9 +109,9 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	gridModeEndabled: false
 }
 
-const createViewer = () => {
+const createViewer = (operators: string) => {
 	if($(".HyperMD-codeblock-begin").text()==="```math") {
-		updateLatexViewer();
+		updateLatexViewer(operators);
 	}
 }
 
@@ -81,7 +133,7 @@ const removeViewer = function() {
 
 let filterTimeout: any;
 
-const updateLatexViewer = async()=>{
+const updateLatexViewer = async(operators: string)=>{
 	clearTimeout(filterTimeout);
 
 	filterTimeout = setTimeout(async() => {
@@ -91,7 +143,7 @@ const updateLatexViewer = async()=>{
 			fullText+="\n"+($(this).text()||"\n");
 		});
 		let rawEqu = fullText.replace(/\|\|.+\|\|\n*/gm,"").replace(/%34o.+%34c\n*/gm,"");
-		let equ = formatEquation(rawEqu);
+		let equ = formatEquation(rawEqu, operators);
 
 		let mdBlockEnd = document.querySelector(".HyperMD-codeblock-end");
 		let livePrevPlus = $(".livePrevPlus");
@@ -124,6 +176,7 @@ export default class MathPlus extends Plugin {
 		const livePreviewEnabled = this.settings.livePreview;
 		const formattingHidden = this.settings.formattingHidden;
 		const idHidden = this.settings.idHidden;
+		const operators = this.settings.operators;
 		$("<style>").text(`.min-height-true { min-height:${this.settings.minHeight}px}`).appendTo("head");
 			
 
@@ -182,7 +235,9 @@ export default class MathPlus extends Plugin {
 		$(function() {
 			let lastHeight = 0;
 			if(livePreviewEnabled){
-				$("body").on('DOMSubtreeModified', ".HyperMD-codeblock", createViewer);
+				$("body").on('DOMSubtreeModified', ".HyperMD-codeblock", function(){
+					createViewer(operators);
+				});
 		
 				$("body").on('DOMNodeInserted', ".cm-preview-code-block.cm-embed-block.markdown-rendered", removeViewer);
 			}
@@ -263,7 +318,7 @@ export default class MathPlus extends Plugin {
 
 			// Parse Equation
 			let rawEqu = source.replace(/\|\|.+\|\|\n*/gm,"").replace(/%34o.+%34c\n*/gm,"");;
-			let equ = formatEquation(rawEqu);
+			let equ = formatEquation(rawEqu, operators);
 
 			// Render Equation
 			el.append(renderMath(equ, true));
@@ -396,7 +451,7 @@ export default class MathPlus extends Plugin {
 	}
 
 	onunload() {
-		$("body").off('DOMSubtreeModified', ".HyperMD-codeblock", createViewer);
+		$("body").off('DOMSubtreeModified', ".HyperMD-codeblock");
 
 		$("body").off('DOMNodeInserted', ".cm-preview-code-block.cm-embed-block.markdown-rendered", removeViewer);
 
@@ -430,6 +485,18 @@ class MathPlusSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		containerEl.createEl('h2', {text: 'Obsidian Math + Settings'});
+
+		// Shortcuts
+		containerEl.createEl('h3', {text: 'Operators'});
+
+		new Setting(containerEl)
+		.setName('Operators')
+		.addTextArea(text => text
+		.setValue(this.plugin.settings.operators)
+		.onChange(async (value) => {
+			this.plugin.settings.operators = value;
+			await this.plugin.saveSettings();
+		})).setClass("big-text-area");
 
 
 		// Colors
