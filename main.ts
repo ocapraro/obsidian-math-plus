@@ -487,16 +487,23 @@ class MathPlusSettingTab extends PluginSettingTab {
 		containerEl.createEl('h2', {text: 'Obsidian Math + Settings'});
 
 		// Shortcuts
-		containerEl.createEl('h3', {text: 'Operators'});
+		containerEl.createEl('h3', {text: 'Shortcuts'});
 
 		new Setting(containerEl)
-		.setName('Operators')
+		.setName('Shortcuts')
 		.addTextArea(text => text
 		.setValue(this.plugin.settings.operators)
 		.onChange(async (value) => {
 			this.plugin.settings.operators = value;
 			await this.plugin.saveSettings();
-		})).setClass("big-text-area");
+		}))
+		.setClass("big-text-area")
+		.addButton(button => button
+		.setButtonText("Update")
+		.onClick(()=>{
+			window.location.reload();
+		})
+		);
 
 
 		// Colors

@@ -105,6 +105,12 @@
   white-space: pre;
 }
 
+.big-text-area .setting-item-control {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
 .math-pill {
   height: 3.5px;
   width: 50%;
