@@ -46,7 +46,11 @@
 }
 
 .block-language-math::-webkit-resizer {
-  display: none;
+  display: none !important;
+}
+
+.block-language-math::-webkit-scrollbar-corner {
+  background: rgba(0,0,0,0);
 }
 
 /* .block-language-math:not(:hover)::-webkit-resizer {
