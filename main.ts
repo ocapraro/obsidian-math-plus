@@ -72,10 +72,6 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 					"format":"{|%s2%|}"
 			},
 			{
-					"op":"\\su",
-					"format":"\\sum\\limits_{%s2%}^{%s1%}"
-			},
-			{
 					"op":"\\is",
 					"format":"\\sum\\limits_{n=%s2%}^{\\infty}"
 			}
