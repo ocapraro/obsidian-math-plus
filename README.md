@@ -2,7 +2,7 @@
 Obsidian Math+ is a plugin for taking math notes quickly and efficiently.
 
 [<img style="float:left" src="https://user-images.githubusercontent.com/14358394/115450238-f39e8100-a21b-11eb-89d0-fa4b82cdbce8.png" width="200">](https://ko-fi.com/ocapraro)
-<br><br><br>
+<br><br>
 ## Usage
 Run the `Insert math block` command, either using the command pallet or `cmd + M`. This will create a math block for you to start taking notes in, you can write these notes using LaTex, or just write the equations out intuitively, and they will be parsed to the best of this plugin's ability.
 
