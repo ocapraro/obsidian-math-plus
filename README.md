@@ -44,6 +44,8 @@ This shortcut makes it so whenever you type `/` it will get the character or gro
 
 ![math block size settings](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/master/assets/shortcuts-settings.png)
 
+Use the update button to apply your shortcut changes.
+
 **Colors**
 
 Here you can change the three default colors you can pick from while taking notes, or turn on the color picker for customization on the fly.
