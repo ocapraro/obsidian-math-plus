@@ -36,6 +36,10 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	// Operators
 	operators: `[
 			{
+				"op":"\\)",
+				"format":"{\\rparen"
+			},
+			{
 					"op":"\\if",
 					"format":"{\\text{if }}"
 			},
@@ -485,6 +489,7 @@ class MathPlusSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 		.setName('Shortcuts')
+		.setDesc("Shortcuts to be parsed when writing in math blocks. Check out the ")
 		.addTextArea(text => text
 		.setValue(this.plugin.settings.operators)
 		.onChange(async (value) => {
@@ -497,7 +502,11 @@ class MathPlusSettingTab extends PluginSettingTab {
 		.onClick(()=>{
 			window.location.reload();
 		})
-		);
+		)
+		.descEl
+		.createEl('a', {text: 'github README ',href:"https://github.com/ocapraro/obsidian-math-plus#readme"})
+		.parentElement.createEl('span', {text: 'for a guide.'})
+		;
 
 
 		// Colors
