@@ -6,5 +6,5 @@
 	"description": "This is an Obsidian plugin for taking math notes using Excalidraw.",
 	"author": "Oscar Capraro",
 	"authorUrl": "https://github.com/ocapraro",
-	"isDesktopOnly": true
+	"isDesktopOnly": false
 }
