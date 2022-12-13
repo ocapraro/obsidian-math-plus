@@ -4,7 +4,7 @@ Obsidian Math+ is a plugin for taking math notes quickly and efficiently.
 [<img style="float:left" src="https://user-images.githubusercontent.com/14358394/115450238-f39e8100-a21b-11eb-89d0-fa4b82cdbce8.png" width="200">](https://ko-fi.com/ocapraro)
 <br><br>
 ## Usage
-Run the `Insert math block` command, either using the command pallet or `cmd + M`. This will create a math block for you to start taking notes in, you can write these notes using LaTex, or just write the equations out intuitively, and they will be parsed to the best of this plugin's ability.
+Run the `Insert math block` command, either using the command pallet or `cmd + M`. This will create a math block for you to start taking notes in, you can write these notes using LaTeX, or just write the equations out intuitively, and they will be parsed to the best of this plugin's ability.
 
 ![rendered equation](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/0.2.4/assets/editor-to-rendered.png)
 
@@ -22,7 +22,7 @@ To save your drawing, press the checkmark in the upper right corner, and your dr
 ## Settings
 **Shortcuts**
 
-The Shortcuts setting lets you input custom commands to be translated into LaTex when input into the math blocks.
+The Shortcuts setting lets you input custom commands to be translated into LaTeX when input into the math blocks.
 
 ```
 {
