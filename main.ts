@@ -6,6 +6,7 @@ import $ from "jquery";
 /**
  * TODO:
  * - [X] Add excalidraw tool lock
+ * - [X] Toggle excalidraw tool lock in settings
  * - Add drawing folder path location setting
  *
  * FIXME:
@@ -31,6 +32,7 @@ interface MathPlusSettings {
 	idHidden:boolean;
 	formattingHidden:boolean;
 	// Excalidraw UI
+	lockVisable: boolean;
 	selectVisable: boolean;
 	rectVisable: boolean;
 	diamondVisable: boolean;
@@ -106,6 +108,7 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	idHidden:false,
 	formattingHidden:true,
 	// Excalidraw UI
+	lockVisable: true,
 	selectVisable: true,
 	rectVisable: false,
 	diamondVisable: false,
@@ -373,6 +376,7 @@ export default class MathPlus extends Plugin {
 			}
 
 			// Hide Buttons
+			this.settings.lockVisable?null:el.addClass("no-lock");
 			this.settings.selectVisable?null:el.addClass("no-select");
 			this.settings.rectVisable?null:el.addClass("no-rect");
 			this.settings.diamondVisable?null:el.addClass("no-diamond");
@@ -636,6 +640,16 @@ class MathPlusSettingTab extends PluginSettingTab {
 		// Excalidraw UI
 		containerEl.createEl('h3', {text: 'Excalidraw UI'});
 
+		new Setting(containerEl)
+		.setName('Lock Button Visible')
+		.setDesc("Key: Q")
+		.addToggle(toggle => toggle
+		.setValue(this.plugin.settings.lockVisable)
+		.onChange(async (value) => {
+			this.plugin.settings.lockVisable = value;
+			await this.plugin.saveSettings();
+		}));
+		
 		new Setting(containerEl)
 		.setName('Select Button Visible')
 		.setDesc("Keys: V or 1")

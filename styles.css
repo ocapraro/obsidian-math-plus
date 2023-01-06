@@ -321,8 +321,8 @@
 }
 
 /* Hide Buttons */
-.no-lock .App-toolbar label[title="Keep selected tool active after drawing — Q"] {
-  display: none;
+.no-lock label[title="Keep selected tool active after drawing — Q"] {
+  display: none !important;
 }
 
 .excalidraw-canvas-wrapper .App-toolbar label[title="Insert image — 9"] {
