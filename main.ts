@@ -3,6 +3,17 @@ import { formatEquation } from "./parser";
 import { renderCanvas } from "./excalidrawRenderer"
 import $ from "jquery";
 
+/**
+ * TODO:
+ * - Add excalidraw tool lock
+ * - Add drawing folder path location setting
+ *
+ * FIXME:
+ * - [X] Stop tools getting cut off when in short mode.
+ * - Change button color var to match updated
+ * 
+*/
+
 interface MathPlusSettings {
 	// Operators
 	operators:string;
@@ -175,7 +186,24 @@ export default class MathPlus extends Plugin {
 		const formattingHidden = this.settings.formattingHidden;
 		const idHidden = this.settings.idHidden;
 		const operators = this.settings.operators;
-		$("<style>").text(`.min-height-true { min-height:${this.settings.minHeight}px}`).appendTo("head");
+		const tools = [
+			this.settings.selectVisable,
+			this.settings.rectVisable,
+			this.settings.diamondVisable,
+			this.settings.ellipseVisable,
+			this.settings.arrowVisable,
+			this.settings.lineVisable,
+			this.settings.penVisable,
+			this.settings.textVisable
+		]
+		const toolCount = tools.filter(Boolean).length;
+		console.log(toolCount);
+
+		// Save Variable styles
+		$("<style>").text(`
+		.min-height-true { min-height:${this.settings.minHeight}px}
+		.excalidraw-canvas-wrapper .small-canvas section:hover { max-width: ${15+(45*toolCount)}px; }
+		`).appendTo("head");
 			
 
 			const saveToFile = async (fileName:string, data:string, directory:string, closeDrawing=true) => {

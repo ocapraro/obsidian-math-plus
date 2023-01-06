@@ -468,10 +468,6 @@
     margin-bottom: -25px;
 }
 
-.excalidraw-canvas-wrapper .small-canvas section:hover {
-    max-width: 250px;
-}
-
 .excalidraw-canvas-wrapper .small-canvas section .Stack_horizontal .Stack_horizontal {
   flex-direction: row;
 }
