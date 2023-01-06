@@ -1,4 +1,4 @@
-import { App, Editor, Notice, Plugin, PluginSettingTab, Setting, renderMath, finishRenderMath, loadMathJax } from 'obsidian';
+import { App, Editor, Notice, Plugin, PluginSettingTab, Setting, renderMath, finishRenderMath, loadMathJax, FileManager } from 'obsidian';
 import { formatEquation } from "./parser";
 import { renderCanvas } from "./excalidrawRenderer"
 import $ from "jquery";
@@ -7,7 +7,7 @@ import $ from "jquery";
  * TODO:
  * - [X] Add excalidraw tool lock
  * - [X] Toggle excalidraw tool lock in settings
- * - Add drawing folder path location setting
+ * - [X] Add drawing folder path location setting
  *
  * FIXME:
  * - [X] Stop tools getting cut off when in short mode.
@@ -15,7 +15,10 @@ import $ from "jquery";
  * 
 */
 
+
 interface MathPlusSettings {
+	// Custom Path
+	path:string;
 	// Operators
 	operators:string;
 	// Colors
@@ -46,6 +49,8 @@ interface MathPlusSettings {
 }
 
 const DEFAULT_SETTINGS: MathPlusSettings = {
+	// Custom Path
+	path:`.obsidian/plugins/obsidian-math-plus`,
 	// Operators
 	operators: `[
 			{
@@ -200,6 +205,7 @@ export default class MathPlus extends Plugin {
 			this.settings.textVisable
 		]
 		const toolCount = tools.filter(Boolean).length;
+		const pluginPath = this.settings.path+"/";
 
 		// Save Variable styles
 		$("<style>").text(`
@@ -211,12 +217,12 @@ export default class MathPlus extends Plugin {
 			const saveToFile = async (fileName:string, data:string, directory:string, closeDrawing=true) => {
 				const vault = this.app.vault;
 				const adapter = vault.adapter;
-				let directoryPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}`;
+				let directoryPath =  pluginPath+directory;
 				// If the directory isn't there, make it
 				if(!await adapter.exists(directoryPath)){
 					await adapter.mkdir(directoryPath);
 				}
-				const configPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}/${fileName}`;
+				const configPath = `${directoryPath}/${fileName}`;
 				if(await adapter.exists(configPath)){
 					await adapter.write(configPath,data);
 				}else{
@@ -225,7 +231,7 @@ export default class MathPlus extends Plugin {
 			}
 
 		const readFile = async (fileName:string, directory:string) => {
-			const configPath = this.app.vault.configDir + `/plugins/obsidian-math-plus/${directory}/${fileName}`;
+			const configPath = `${pluginPath}${directory}/${fileName}`;
 			if(await this.app.vault.adapter.exists(configPath)){
 				return await this.app.vault.adapter.read(configPath);
 			}
@@ -314,12 +320,12 @@ export default class MathPlus extends Plugin {
 			const adapter = vault.adapter;
 
 			const saveToFile = async (fileName:string, data:string, directory:string, closeDrawing=true) => {
-				let directoryPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}`;
+				let directoryPath = pluginPath+directory;
 				// If the drawings directory isn't there, make it
 				if(!await adapter.exists(directoryPath)){
 					await adapter.mkdir(directoryPath);
 				}
-				const configPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}/${fileName}`;
+				const configPath = `${pluginPath}${directory}/${fileName}`;
 				if(await adapter.exists(configPath)){
 					await adapter.write(configPath,data);
 				}else{
@@ -337,7 +343,7 @@ export default class MathPlus extends Plugin {
 			}
 
 			const readFile = async (fileName:string, directory:string) => {
-				const configPath = vault.configDir + `/plugins/obsidian-math-plus/${directory}/${fileName}`;
+				const configPath = `${pluginPath}${directory}/${fileName}`;
 				if(await adapter.exists(configPath)){
 					return await adapter.read(configPath);
 				}
@@ -358,7 +364,7 @@ export default class MathPlus extends Plugin {
 			if(blockOptions) {
 				blockId = blockOptions.id;
 			}
-			const configPath = vault.configDir + `/plugins/obsidian-math-plus/drawings/data-${blockId}.svg`;
+			const configPath = `${pluginPath}drawings/data-${blockId}.svg`;
 			if(await adapter.exists(configPath)){
 				let svgData = await adapter.read(configPath);
 				el.append(parser.parseFromString(`<div class="math-svg-wrapper" style="width:${(el.querySelector("mjx-container mjx-math").clientWidth?el.querySelector("mjx-container mjx-math").clientWidth+"px":"100%")};">${svgData.replace(/viewBox="[0-9 .]+"/,"")}</div>`, "text/html").body.querySelector("div"));
@@ -514,6 +520,17 @@ class MathPlusSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		containerEl.createEl('h2', {text: 'Obsidian Math + Settings'});
+
+		// Custom Path
+		new Setting(containerEl)
+		.setName('Save Data Path')
+		.setDesc("Change the default path to save drawing data.")
+		.addText(text => text
+		.setValue(this.plugin.settings.path)
+		.onChange(async (value) => {
+			this.plugin.settings.path = value;
+			await this.plugin.saveSettings();
+		}));
 
 		// Shortcuts
 		containerEl.createEl('h3', {text: 'Shortcuts'});
