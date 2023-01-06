@@ -321,6 +321,10 @@
 }
 
 /* Hide Buttons */
+.no-lock .App-toolbar label[title="Keep selected tool active after drawing — Q"] {
+  display: none;
+}
+
 .excalidraw-canvas-wrapper .App-toolbar label[title="Insert image — 9"] {
   display: none;
 }
@@ -354,6 +358,28 @@
   display: none;
 }
 
+/* Lock UI */
+.App-toolbar-container.App-toolbar-container.App-toolbar-container.App-toolbar-container label[title="Keep selected tool active after drawing — Q"] {
+  left: -50px;
+  display: block;
+  position: absolute;
+  opacity: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 100px;
+  outline: none !important;
+}
+
+.App-toolbar-container.App-toolbar-container.App-toolbar-container.App-toolbar-container label[title="Keep selected tool active after drawing — Q"] * {
+  box-shadow: none !important;
+}
+
+.App-toolbar-container.App-toolbar-container.App-toolbar-container.App-toolbar-container label[title="Keep selected tool active after drawing — Q"] .ToolIcon__icon {
+  border-radius: 100px;
+  width: 2.5em;
+  height: 2.5em;
+}
+
 /* Style UI */
 .excalidraw-canvas-wrapper .App-toolbar-container.App-toolbar-container.App-toolbar-container > * {
     display: none;
@@ -367,7 +393,7 @@
     transition: opacity 300ms;
 }
 
-.cm-preview-code-block:hover .App-toolbar-container .Island.App-toolbar, .cm-preview-code-block:hover button, .cm-preview-code-block:hover .math-button,.cm-preview-code-block:hover .math-color-box {
+.cm-preview-code-block:hover .App-toolbar-container .Island.App-toolbar, .cm-preview-code-block:hover button, .cm-preview-code-block:hover .math-button,.cm-preview-code-block:hover .math-color-box, .cm-preview-code-block:hover label[title="Keep selected tool active after drawing — Q"] {
     opacity: 1 !important;
 }
 
@@ -461,11 +487,14 @@
 
 /* Small UI */
 .excalidraw-canvas-wrapper .small-canvas section{
-    max-width: 60px;
-    transition: max-width 300ms;
     top: unset !important;
     bottom: 8px;
     margin-bottom: -25px;
+}
+
+.excalidraw-canvas-wrapper .small-canvas section .Island.App-toolbar {
+  max-width: 60px;
+  transition: max-width 300ms;
 }
 
 .excalidraw-canvas-wrapper .small-canvas section .Stack_horizontal .Stack_horizontal {
