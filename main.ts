@@ -200,7 +200,6 @@ export default class MathPlus extends Plugin {
 			this.settings.textVisable
 		]
 		const toolCount = tools.filter(Boolean).length;
-		console.log(toolCount);
 
 		// Save Variable styles
 		$("<style>").text(`
