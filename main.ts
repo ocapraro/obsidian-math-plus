@@ -50,7 +50,7 @@ interface MathPlusSettings {
 
 const DEFAULT_SETTINGS: MathPlusSettings = {
 	// Custom Path
-	path:`.obsidian/plugins/obsidian-math-plus`,
+	path:``,
 	// Operators
 	operators: `[
 			{
@@ -205,6 +205,10 @@ export default class MathPlus extends Plugin {
 			this.settings.textVisable
 		]
 		const toolCount = tools.filter(Boolean).length;
+		
+		// Set Path
+		this.settings.path = this.settings.path.length>0?this.settings.path:this.app.vault.configDir+`/plugins/obsidian-math-plus`;
+		await this.saveSettings();
 		const pluginPath = this.settings.path+"/";
 
 		// Save Variable styles
