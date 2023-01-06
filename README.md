@@ -20,6 +20,12 @@ To save your drawing, press the checkmark in the upper right corner, and your dr
 ![excalidraw svg](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/0.2.4/assets/math-annotated-svg.png)
 
 ## Settings
+**Save Data Path**
+
+This setting allows you to change the location of where your drawings and drawing data should be saved.
+
+![path settings](https://raw.githubusercontent.com/ocapraro/obsidian-math-plus/master/assets/path-settings.png)
+
 **Shortcuts**
 
 The Shortcuts setting lets you input custom commands to be translated into LaTeX when input into the math blocks.
