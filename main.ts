@@ -5,7 +5,7 @@ import $ from "jquery";
 
 /**
  * TODO:
- * - Add excalidraw tool lock
+ * - [X] Add excalidraw tool lock
  * - Add drawing folder path location setting
  *
  * FIXME:
@@ -202,7 +202,7 @@ export default class MathPlus extends Plugin {
 		// Save Variable styles
 		$("<style>").text(`
 		.min-height-true { min-height:${this.settings.minHeight}px}
-		.excalidraw-canvas-wrapper .small-canvas section:hover { max-width: ${15+(45*toolCount)}px; }
+		.excalidraw-canvas-wrapper .small-canvas section .Island.App-toolbar:hover { max-width: ${15+(45*toolCount)}px; }
 		`).appendTo("head");
 			
 
