@@ -54,8 +54,16 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 	// Operators
 	operators: `[
 			{
-				"op":"\\)",
-				"format":"{\\rparen"
+					"op":"\left{(",
+					"format":"{("
+			},
+			{
+					"op":"\right)",
+					"format":")"
+			},
+			{
+					"op":"\\)",
+					"format":"{\\rparen"
 			},
 			{
 					"op":"\\if",
