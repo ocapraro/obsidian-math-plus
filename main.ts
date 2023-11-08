@@ -80,14 +80,6 @@ const DEFAULT_SETTINGS: MathPlusSettings = {
 					"format":"{\\text{ or }}"
 			},
 			{
-					"op":"^",
-					"format":"{{%s1%}^{%s2%}}"
-			},
-			{
-					"op":"_",
-					"format":"{{%s1%}_{%s2%}}"
-			},
-			{
 					"op":"!",
 					"format":"{%s1%!}"
 			},
