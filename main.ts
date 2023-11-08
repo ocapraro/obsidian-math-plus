@@ -5,14 +5,16 @@ import $ from "jquery";
 
 /**
  * TODO:
- * - [X] Add excalidraw tool lock
- * - [X] Toggle excalidraw tool lock in settings
- * - [X] Add drawing folder path location setting
- *
+ * - [ ] Add fill types
+ * - [ ] Add line size
+ * - [ ] Add align
+ * - [ ] Add corner options
+
  * FIXME:
- * - [X] Stop tools getting cut off when in short mode.
- * - Change button color var to match updated
- * 
+ * - [ ] Bound integrals entirely broken
+ * - [ ] Excalidraw plugin style conflict
+ * - [ ] Fix side bar overlapping
+ * - [ ] Change button color var to match updated
 */
 
 
