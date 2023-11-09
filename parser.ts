@@ -50,7 +50,7 @@ const formatOperator = (str: string, dirtyOp: string, strFormat: string) => {
       if((i>0 && i<substituteString.length && ((substituteString.split(op).length-1)>0))) {
         if(id>100000){
           console.log("Too many operators/Bad while loop");
-          break
+          break;
         }
         let range1 = [i-1,i];
         let range2 = [i+op.length,i+1+op.length];
@@ -69,7 +69,7 @@ const formatOperator = (str: string, dirtyOp: string, strFormat: string) => {
         substituteString = substituteString.replace(substituteString.slice(range1[0],range2[1]),substitute.keyString);
 
       }else{
-        break
+        break;
       }
     }
     while (true) {
@@ -79,12 +79,12 @@ const formatOperator = (str: string, dirtyOp: string, strFormat: string) => {
           substituteString = substituteString.replace(substitute.keyString,substitute.formattedStr);
         }
       }else{
-        break
+        break;
       }
     }
-    return substituteString
+    return substituteString;
   }else{
-    return str
+    return str;
   }
 }
 
