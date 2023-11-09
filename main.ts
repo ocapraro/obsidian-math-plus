@@ -12,10 +12,10 @@ import $ from "jquery";
  * - [ ] Add corner options
 
  * FIXME:
- * - [ ] Bound integrals entirely broken
  * - [ ] Excalidraw plugin style conflict
  * - [ ] Fix side bar overlapping
  * - [ ] Change button color var to match updated
+ * - [X] Bound integrals entirely broken
 */
 
 
