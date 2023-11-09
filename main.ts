@@ -5,6 +5,7 @@ import $ from "jquery";
 
 /**
  * TODO:
+ * - [ ] Add testing sheet
  * - [ ] Add fill types
  * - [ ] Add line size
  * - [ ] Add align
