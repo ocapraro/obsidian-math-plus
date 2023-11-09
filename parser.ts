@@ -103,6 +103,7 @@ const formatGroups = (str: string) => {
 }
 
 const addLines = (str: string) => {
+  // replaces new lines with \\ so that LaTex recognizes them
   let formattedString = `\\begin{align*}&${str.replace(/\n/ig, "\\\\&")}\\end{align*}`;
   return formattedString
 }
