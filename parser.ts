@@ -95,6 +95,8 @@ const formatGroups = (str: string) => {
   formattedString = formattedString.replace(/[0-9.][0-9.]+/ig, "{$&}");
   // Wrap \infty in group tags
   formattedString = formattedString.replace(/\\infty/ig, "{$&}");
+  // Wrap any expression raised to a power in group tags to avoid char separation
+  formattedString = formattedString.replace(/(\\[A-Za-z]+)([\^_])/ig, "{$1}$2");
   return formattedString
 }
 
