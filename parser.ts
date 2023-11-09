@@ -9,7 +9,7 @@ const closeGroup = (str: string, d=1) => {
       closeCount+=1;
     }
     if(openCount === closeCount){
-      return i
+      return i;
     }
   }
   // Returns -1 if it reaches end of string w/o closing
@@ -88,6 +88,31 @@ const formatOperator = (str: string, dirtyOp: string, strFormat: string) => {
   }
 }
 
+const handleSuperSubScripts = (str: string): string => {
+  const singleMatch = str.match(/(\\?[A-Z0-9]+)[\^_]/i);
+  const groupMatch = str.match(/\}[\^_]/i);
+  let match = (singleMatch&&groupMatch)?((singleMatch.index<groupMatch.index)?singleMatch:groupMatch):(singleMatch||groupMatch);
+  if (singleMatch && match == singleMatch) {
+    let endex = match.index+match[0].length;
+    while (str[endex] == "{"){
+      endex += closeGroup(str.slice(endex));
+      if ("^_".includes(str[endex+1])){
+        endex += 2;
+      }
+    }
+    if (str[endex]=="\\"){
+      endex += str.slice(endex+1).match(/[a-z]+/i)[0].length;
+    }
+    return str.slice(0,match.index) + "{" + str.slice(match.index,endex+1) + "}" + handleSuperSubScripts(str.slice(endex+1));
+  }
+  if(groupMatch && match == groupMatch){
+    let flipString = [...str].reverse().join("");
+    let startIndex = match.index-closeGroup(flipString.slice(flipString.length-match.index),0);
+    return (str.slice(0,startIndex) + handleSuperSubScripts("\\MATHPLUSPLACEHOLDER"+ str.slice(match.index+match[0].length-1))).replace("\\MATHPLUSPLACEHOLDER",str.slice(startIndex,match.index+match[0].length-1));
+  }
+  return str;
+}
+
 const formatGroups = (str: string) => {
   // Wrap parentheses in group tags
   let formattedString = str.replace(/\)/g, ')}').replace(/\(/g, '{(');
@@ -98,8 +123,9 @@ const formatGroups = (str: string) => {
   // Wrap any expression raised to a power in group tags to avoid char separation
   formattedString = formattedString.replace(/(\\[A-Za-z]+)([\^_])/ig, "{$1}$2");
   // Wrap any long expressions in group tags
-  formattedString = formattedString.replace(/\\?[A-Za-z\{\}\(\)\[\]0-9]+[\^_][A-Za-z\{\}\(\)\[\]0-9]+[\^_]?[A-Za-z\{\}\(\)\[\]0-9]*/ig, "{$&}");
-  return formattedString
+  // formattedString = formattedString.replace(/\\?[A-Za-z\{\}\(\)\[\]0-9]+[\^_][A-Za-z\{\}\(\)\[\]0-9]+[\^_]?[A-Za-z\{\}\(\)\[\]0-9]*/ig, "{$&}");
+  formattedString = handleSuperSubScripts(formattedString);
+  return formattedString;
 }
 
 const addLines = (str: string) => {
