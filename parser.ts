@@ -97,6 +97,8 @@ const formatGroups = (str: string) => {
   formattedString = formattedString.replace(/\\infty/ig, "{$&}");
   // Wrap any expression raised to a power in group tags to avoid char separation
   formattedString = formattedString.replace(/(\\[A-Za-z]+)([\^_])/ig, "{$1}$2");
+  // Wrap any long expressions in group tags
+  formattedString = formattedString.replace(/\\?[A-Za-z\{\}\(\)\[\]0-9]+[\^_][A-Za-z\{\}\(\)\[\]0-9]+[\^_]?[A-Za-z\{\}\(\)\[\]0-9]*/ig, "{$&}");
   return formattedString
 }
 
