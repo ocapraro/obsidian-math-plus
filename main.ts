@@ -5,17 +5,16 @@ import $ from "jquery";
 
 /**
  * TODO:
+ * - [ ] Add align
  * - [ ] Add testing sheet
  * - [ ] Add fill types
  * - [ ] Add line size
- * - [ ] Add align
  * - [ ] Add corner options
 
  * FIXME:
  * - [ ] Excalidraw plugin style conflict
  * - [ ] Fix side bar overlapping
  * - [ ] Change button color var to match updated
- * - [X] Bound integrals entirely broken
 */
 
 
