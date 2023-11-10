@@ -94,11 +94,15 @@ const handleSuperSubScripts = (str: string): string => {
   let match = (singleMatch&&groupMatch)?((singleMatch.index<groupMatch.index)?singleMatch:groupMatch):(singleMatch||groupMatch);
   if (singleMatch && match == singleMatch) {
     let endex = match.index+match[0].length;
-    while (str[endex] == "{"){
+    if (str[endex] == "{"){
       endex += closeGroup(str.slice(endex));
-      if ("^_".includes(str[endex+1])){
-        endex += 2;
-      }
+    }
+    if ("^_".includes(str[endex+1])){
+      console.log(str[endex+1]);
+      endex += 2;
+    }
+    if (str[endex] == "{"){
+      endex += closeGroup(str.slice(endex));
     }
     if (str[endex]=="\\"){
       endex += str.slice(endex+1).match(/[a-z]+/i)[0].length;
