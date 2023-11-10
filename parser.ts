@@ -98,7 +98,6 @@ const handleSuperSubScripts = (str: string): string => {
       endex += closeGroup(str.slice(endex));
     }
     if ("^_".includes(str[endex+1])){
-      console.log(str[endex+1]);
       endex += 2;
     }
     if (str[endex] == "{"){
