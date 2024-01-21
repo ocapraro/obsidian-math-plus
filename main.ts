@@ -12,7 +12,6 @@ import $ from "jquery";
  * - [ ] Add corner options
 
  * FIXME:
- * - [ ] Excalidraw plugin style conflict
  * - [ ] Fix side bar overlapping
  * - [ ] Change button color var to match updated
 */
