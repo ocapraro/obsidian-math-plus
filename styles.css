@@ -89,12 +89,12 @@
 }
 
 /* Fix Expanding Toolbar */
-.excalidraw .App-bottom-bar > .Island {
+.excalidraw .App-bottom-bar > .Island.Island {
   width: unset;
   min-width: unset;
 }
 
-.excalidraw .ToolIcon_type_button {
+.excalidraw .ToolIcon_type_button.ToolIcon_type_button.ToolIcon_type_button {
   margin: 0 3px;
 }
 
